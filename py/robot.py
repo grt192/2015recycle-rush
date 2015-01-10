@@ -1,6 +1,11 @@
 __author__ = "Sidd Karamcheti, Calvin Huang, Alex Mallery"
 
-import wpilib
+try:
+    from pyfrc import wpilib
+except ImportError:
+    import wpilib
+
+
 import time
 
 try:
@@ -12,6 +17,8 @@ except NameError:
 class MyRobot(wpilib.SampleRobot):
     def __init__(self):
         super().__init__()
+        #print("Hi!")
+        #print("Added in!")
         import config
         self.sp = config.sp
         self.hid_sp = config.hid_sp
@@ -57,13 +64,14 @@ class MyRobot(wpilib.SampleRobot):
         #dog.setExpiration(0.25)
         #dog.setEnabled(True)
 
-
         while self.isOperatorControl() and self.isEnabled():
             #dog.Feed()
             tinit = time.time()
+            #print("Added in!")
             self.teleop_controller.poll()
             time.sleep(0.04 - (time.time() - tinit))
 
 
 if __name__ == "__main__":
+    print("Hi!")
     wpilib.run(MyRobot)

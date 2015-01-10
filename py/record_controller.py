@@ -46,7 +46,8 @@ class RecordController:
 				self.instructions[key].append(self.obj_list[i].Get())
 				print(self.obj_list[i].Get())
 				i += 1
-			wpilib.Wait(.1)
+			#wpilib.Wait(.1)
+			time.sleep(100)
 
 class PlaybackController:
 
@@ -84,7 +85,7 @@ class PlaybackController:
 		"""
 		self.running = False
 		for talon in self.talon_arr_obj:
-			talon.Set(0)
+			talon.set(0)
 		self.revert_controller.engage()
 
 	def run_playback(self):
@@ -95,11 +96,12 @@ class PlaybackController:
 		for i in range(len(self.talon_arr[0])):
 			print(str(range(len(self.talon_arr[0]))))
 			for j in range(len(self.talon_arr)):
-				self.talon_arr_obj[j].Set(self.talon_arr[j][i])
+				self.talon_arr_obj[j].set(self.talon_arr[j][i])
 				print(self.talon_arr[j][i])
 				print("J: " + str(j))
 				print(i)
-			wpilib.Wait(.1)
+			#wpilib.Wait(.1)
+			time.sleep(100)
 			if not self.running:
 				break
 		self.disengage()

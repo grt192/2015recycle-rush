@@ -1,6 +1,8 @@
 from record_controller import RecordController, PlaybackController
 import sys
+import os
 from collections import OrderedDict
+import wpilib
 class TeleopController:
 
     def __init__(self, driver_stick, drive_controller, talon_arr, sp, hid_sp):
@@ -42,10 +44,12 @@ class TeleopController:
         """
         self.driver_stick.add_listener(self._joylistener)
 
+        #self.temp_joystick = wpilib.Joystick(1)
+
     def poll(self):
         self.sp.poll()
         self.hid_sp.poll()
-        
+        #print(str(self.temp_joystick.getRawButton(5)))
 
     def _joylistener(self, sensor, state_id, datum):
 
@@ -54,9 +58,15 @@ class TeleopController:
         exception to force robotpy to reload the code.
         """
 
-        if state_id == "button10":
+        if state_id == "button2":
             if datum:
-                raise NameError('Rebooting')
+                #raise NameError('Rebooting')
+                #print("Rebooting")
+                #print(str(sys.executable))
+                os.execv(sys.executable, [sys.executable, 'robot.py', 'sim'])
+                #os.execl(sys.argv[0], 'sim')
+                #os.system("python3.4 robot.py sim")
+                #sys.exit(0)
 
         """
         These buttons engage and disengage the recording controller.
