@@ -31,15 +31,6 @@ class ArcadeDriveController:
             else:
                 self.dt.downshift()
 
-    def engage(self):
-            self.l_joystick.add_listener(self._joylistener)
-            if self.r_joystick:
-                self.r_joystick.add_listener(self._joylistener)
-
-    def disengage(self):
-            self.l_joystick.remove_listener(self._joylistener)
-            if self.r_joystick:
-                self.r_joystick.remove_listener(self._joylistener)
 
 class TankDriveController:
     """

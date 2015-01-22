@@ -56,7 +56,7 @@ hid_sp = SensorPoller((driver_stick, xbox_controller))  # human interface device
 
 ds = DriverStation.getInstance()
 
-teleop_controller = TeleopController(driver_stick, ac, talon_arr, sp, hid_sp)
+#teleop_controller = TeleopController(driver_stick, ac, talon_arr, sp, hid_sp)
 
 
 """

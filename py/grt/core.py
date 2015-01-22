@@ -11,8 +11,13 @@ class Sensor(object):
     Take care to not accidentally override vital class attributes
     with update_state.
     """
-    def __init__(self):
+    def __init__(self, recording=False):
         self.listeners = set()  # set of listeners
+        self.recorded_stuff = [] #recorded sensor values
+        self.recording = recording #is the sensor recording its values
+        self.last_time = 0
+        self.playing = False
+
 
     def get(self, name):
         """
@@ -54,6 +59,28 @@ class Sensor(object):
                 l(self, state_id, datum)
             del self.listeners_temp
 
+        if self.recording:
+            if time.time() - self.last_time > 10: 
+                self.stop_recording()
+            self.recorded_stuff += [(state_id, datum)]
+
+    def start_recording(self):
+        self.recording = True
+        self.last_time = time.time()
+
+    def stop_recording(self):
+        self.recording = False
+    
+    def play(self):
+        def play_helper():
+            self.playing = True
+            for key, value in self.recorded_stuff:
+                self.__setattr__(key, value)
+                time.sleep(.04)
+        t = threading.Thread(target=play_helper)
+        t.start()
+
+    
     def poll(self):
         """
         Polls the sensor, notifies any listeners if necessary.
@@ -61,6 +88,13 @@ class Sensor(object):
         Should be overridden by all sensors.
         """
         pass
+
+    def master_poll(self):
+        if self.playing:
+            pass
+        else:
+            self.poll()
+
 
 
 class SensorPoller(object):
