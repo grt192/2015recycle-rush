@@ -3,7 +3,7 @@ basic_auto.py
 """
 
 
-__author__ = "Sidd Karamcheti"
+__author__ = “Abraham Ryzhik“
 
 from . import MacroSequence
 from grt.core import Constants, GRTMacro
