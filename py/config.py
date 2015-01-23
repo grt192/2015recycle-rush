@@ -18,6 +18,10 @@ from grt.sensors.ticker import Ticker
 from grt.sensors.encoder import Encoder
 from teleop_controller import TeleopController
 from grt.sensors.talon import Talon
+from grt.mechanism.betamechs import Pickup
+from grt.mechanism.betamechs import FourBar
+from grt.mechanism.elevator import Elevator
+from get.mechanism.mechcontroller import MechController
 
 #import grt.networktables as networktables
 
@@ -67,7 +71,20 @@ compressor.Start()
 
 #Mechs
 
+fourbar_motor = Talon(fourbar)
+elevator_motor = Talon(elevator)
+pickup_pn = Solenoid(pickup)
+pickup = Pickup(pickup_pn)
+elevator = Elevator(elevator_motor)
+fourbar = FourBar(fourbar_motor)
+
+
+
+
 #Teleop Controllers
+mc = MechController(pickup, elevator, fourbar, driver_stick)
+
+
 """
 #Network Tables
 #vision_table = networktables.get_table('vision')
