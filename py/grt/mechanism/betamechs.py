@@ -1,4 +1,4 @@
-class Pickup
+class Pickup:
     def __init___(self, clamp_pn):
         self.clamp_pn = clamp_pn
 
@@ -8,7 +8,7 @@ class Pickup
     def release(self):
         self.clamp_pn.Set(false)
 
-class FourBar
+class FourBar:
     def __init__(self, fourbar_motor):
         self.fourbar_motor = fourbar_motor
 

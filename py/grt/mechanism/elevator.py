@@ -1,4 +1,4 @@
-class Elevator
+class Elevator:
     def __init__(self, elevator_motor):
         self.elevator_motor = elevator_motor
 
