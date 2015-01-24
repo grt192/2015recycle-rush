@@ -39,8 +39,8 @@ compressor_pin = 1
 dt_shifter = Solenoid(1)
 
 #Digital Sensors
-left_encoder = Encoder(3, 4, 1, reverse=True)
-right_encoder = Encoder(1, 2, 1)
+left_encoder = Encoder(0, 1, 1, reverse=True)
+right_encoder = Encoder(2, 3, 1)
 pressure_sensor_pin = 14
 
 #Analog Sensors

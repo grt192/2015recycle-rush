@@ -1,4 +1,4 @@
-class Pickup
+class Pickup:
     def __init__(self, leadscrew_motor):
         self.leadscrew_motor = leadscrew_motor
 

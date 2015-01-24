@@ -25,38 +25,36 @@ class MyRobot(wpilib.SampleRobot):
         try:
             self.auto = config.basic_auto
         except NameError:
-            self.auto_exists = False
-
+            #self.auto_exists = False
+            pass
 
     def disabled(self):
-        if self.auto_exists:
-            self.auto.stop_autonomous()
+        #if self.auto_exists:
+        self.auto.stop_autonomous()
         while self.isDisabled():
             tinit = time.time()
             self.sp.poll()
             time.sleep(0.04 - (time.time() - tinit))
             #wpilib.Wait(0.04 - (time.time() - tinit))
-    if self.auto_exists:
-        def autonomous(self):
-            
-            self.dt.up_shift()
+    
+    def autonomous(self):
+        
+        #self.dt.up_shift()
             #self.watchdog.SetEnabled(False)
 
             
 
-            self.auto.run_autonomous()
-            while self.isAutonomous() and self.isEnabled():
-                tinit = time.time()
-                self.sp.poll()
-                time.sleep(0.04 - (time.time() - tinit))
-            self.auto.stop_autonomous()
-    else:
-        def autonomous(self):
-            pass
+        self.auto.run_autonomous()
+        while self.isAutonomous() and self.isEnabled():
+            tinit = time.time()
+            self.sp.poll()
+            time.sleep(0.04 - (time.time() - tinit))
+        self.auto.stop_autonomous()
+    
     
     def operatorControl(self):
-        if self.auto_exists:
-            self.auto.stop_autonomous()
+        #if self.auto_exists:
+        self.auto.stop_autonomous()
         self.dt.downshift()  # start in low gear for tele
         #dog = self.getWatchdog()
         #dog.setExpiration(0.25)

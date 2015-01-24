@@ -17,7 +17,7 @@ class Encoder(Sensor):
     stopped = direction = True
 
     def __init__(self, channel_a, channel_b, pulse_dist=1.0,
-                 reverse=False, modnum=1, cpr=128,
+                 reverse=False, cpr=128,
                  enctype=CounterBase.EncodingType.k4X):
         """
         Initializes the encoder with two channels,
@@ -25,10 +25,10 @@ class Encoder(Sensor):
         on module number 1, 128 CPR, and with 4x counting.
         """
         super().__init__()
-        self.e = WEncoder(modnum, channel_a, modnum, channel_b, reverse, enctype)
+        self.e = WEncoder(channel_a, channel_b, reverse, enctype)
         self.cpr = cpr
         self.e.setDistancePerPulse(pulse_dist)
-        self.e.start()
+        # self.e.start()
 
     def poll(self):
         self.distance = self.e.getDistance()
