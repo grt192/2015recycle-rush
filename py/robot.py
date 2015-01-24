@@ -8,10 +8,7 @@ except ImportError:
 
 import time
 
-try:
-    auto = basicauto
-except NameError:
-    auto_exists = False
+
 
 
 class MyRobot(wpilib.SampleRobot):
@@ -25,40 +22,41 @@ class MyRobot(wpilib.SampleRobot):
         self.dt = config.dt
         self.ds = config.ds
         self.teleop_controller = config.teleop_controller
+        try:
+            self.auto = config.basic_auto
+        except NameError:
+            self.auto_exists = False
 
 
     def disabled(self):
-        if auto_exists:
-            auto.stop_autonomous()
+        if self.auto_exists:
+            self.auto.stop_autonomous()
         while self.isDisabled():
             tinit = time.time()
             self.sp.poll()
             time.sleep(0.04 - (time.time() - tinit))
             #wpilib.Wait(0.04 - (time.time() - tinit))
-    if auto_exists:
+    if self.auto_exists:
         def autonomous(self):
-            global auto
+            
             self.dt.up_shift()
             #self.watchdog.SetEnabled(False)
 
-            if ds.getDigitalIn(1):
-                auto = twoballauto
-            else:
-                auto = basicauto
+            
 
-            auto.run_autonomous()
+            self.auto.run_autonomous()
             while self.isAutonomous() and self.isEnabled():
                 tinit = time.time()
                 self.sp.poll()
                 time.sleep(0.04 - (time.time() - tinit))
-            auto.stop_autonomous()
+            self.auto.stop_autonomous()
     else:
         def autonomous(self):
             pass
     
     def operatorControl(self):
-        if auto_exists:
-            auto.stop_autonomous()
+        if self.auto_exists:
+            self.auto.stop_autonomous()
         self.dt.downshift()  # start in low gear for tele
         #dog = self.getWatchdog()
         #dog.setExpiration(0.25)

@@ -4,8 +4,8 @@ Config File for Robot
 
 __author__ = "Sidd Karamcheti"
 
-from wpilib import Solenoid, Compressor, DriverStation
-import wpilib
+from wpilib import Solenoid, Compressor, DriverStation, CANTalon
+
 
 from grt.sensors.attack_joystick import Attack3Joystick
 from grt.sensors.xbox_joystick import XboxJoystick
@@ -21,6 +21,8 @@ from grt.sensors.talon import Talon
 from grt.mechanism.pickup import Pickup
 from grt.mechanism.elevator import Elevator
 from grt.mechanism.mechcontroller import MechController
+from grt.autonomous.basic_auto import BasicAuto
+
 
 #import grt.networktables as networktables
 
@@ -37,8 +39,8 @@ compressor_pin = 1
 dt_shifter = Solenoid(1)
 
 #Digital Sensors
-#left_encoder = Encoder(3, 4, constants['dt_dpp'], reverse=True)
-#right_encoder = Encoder(1, 2, constants['dt_dpp'])
+left_encoder = Encoder(3, 4, 1, reverse=True)
+right_encoder = Encoder(1, 2, 1)
 pressure_sensor_pin = 14
 
 #Analog Sensors
@@ -50,11 +52,11 @@ xbox_controller = XboxJoystick(1)
 
 #DT
 dt = DriveTrain(dt_left, dt_right, dt_shifter,
-                left_encoder=None, right_encoder=None)
+                left_encoder=left_encoder, right_encoder=right_encoder)
 ac = ArcadeDriveController(dt, driver_stick)
 
 #Sensor Pollers
-sp = SensorPoller((gyro,))
+sp = SensorPoller((gyro,left_encoder, right_encoder))
 hid_sp = SensorPoller((driver_stick, xbox_controller))  # human interface devices
 
 ds = DriverStation.getInstance()
@@ -70,13 +72,15 @@ compressor.Start()
 
 #Mechs
 
-leadscrew_motor = Talon(PUTANUMBERHERE)
-elevator_motor = Talon(PUTNUMBERHERETOO)
+leadscrew_motor = CANTalon(5)
+elevator_motor = CANTalon(6)
 pickup = Pickup(leadscrew_motor)
 elevator = Elevator(elevator_motor)
 
 #Teleop Controllers
 mc = MechController(pickup, elevator, driver_stick)
+
+basic_auto = BasicAuto(dt, elevator, pickup)
 """
 #Network Tables
 #vision_table = networktables.get_table('vision')
