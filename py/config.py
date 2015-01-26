@@ -4,7 +4,7 @@ Config File for Robot
 
 __author__ = "Sidd Karamcheti"
 
-from wpilib import Solenoid, Compressor, DriverStation
+from wpilib import Solenoid, Compressor, DriverStation, CANTalon
 import wpilib
 
 from grt.sensors.attack_joystick import Attack3Joystick
@@ -18,20 +18,49 @@ from grt.sensors.ticker import Ticker
 from grt.sensors.encoder import Encoder
 from teleop_controller import TeleopController
 from grt.sensors.talon import Talon
+from grt.mechanism.betamechs import Pickup
+from grt.mechanism.betamechs import FourBar
+from grt.mechanism.elevator import Elevator
+from grt.mechanism.mechcontroller import MechController
 
 #import grt.networktables as networktables
 
 
 #Pin/Port map
 #Talons
-dt_right = Talon(0) #Motorset((Talon(0), Talon(1)), scalefactors=(-1, 1))
-dt_left = Talon(1) #Motorset((Talon(2), Talon(3)), scalefactors=(-1, 1))
+
+dt_right = CANTalon(1)
+dt_r2 = CANTalon(2)
+dt_r3 = CANTalon(3)
+dt_r4 = CANTalon(4)
+
+dt_left = CANTalon(7)
+dt_l2 = CANTalon(8)
+dt_l3 = CANTalon(9)
+dt_l4 = CANTalon(10)
+
+dt_r2.changeControlMode(CANTalon.ControlMode.Follower)
+dt_r3.changeControlMode(CANTalon.ControlMode.Follower)
+dt_r4.changeControlMode(CANTalon.ControlMode.Follower)
+dt_l2.changeControlMode(CANTalon.ControlMode.Follower)
+dt_l3.changeControlMode(CANTalon.ControlMode.Follower)
+dt_l4.changeControlMode(CANTalon.ControlMode.Follower)
+dt_r2.set(1)
+dt_r3.set(1)
+dt_r4.set(1)
+dt_l2.set(7)
+dt_l3.set(7)
+dt_l4.set(7)
+
+
+#dt_right = Talon(0) #Motorset((Talon(0), Talon(1)), scalefactors=(-1, 1))
+#dt_left = Talon(1) #Motorset((Talon(2), Talon(3)), scalefactors=(-1, 1))
 talon_arr = [dt_right, dt_left]
 
 
 #Solenoids + Relays
 compressor_pin = 1
-dt_shifter = Solenoid(1)
+dt_shifter = Solenoid(2)
 
 #Digital Sensors
 #left_encoder = Encoder(3, 4, constants['dt_dpp'], reverse=True)
@@ -44,6 +73,23 @@ gyro = Gyro(1)
 # Controllers
 driver_stick = Attack3Joystick(0)
 xbox_controller = XboxJoystick(1)
+
+#Mechs
+
+fourbar_motor = CANTalon(5)
+elevator_motor = CANTalon(6)
+#elevator_motor.setVoltageRampRate(2000)
+#fourbar_motor.setVoltageRampRate(2000)
+pickup_pn = Solenoid(1)
+pickup = Pickup(pickup_pn)
+elevator = Elevator(elevator_motor)
+fourbar = FourBar(fourbar_motor)
+
+
+
+
+#Teleop Controllers
+mc = MechController(pickup, elevator, fourbar, driver_stick, xbox_controller)
 
 #DT
 dt = DriveTrain(dt_left, dt_right, dt_shifter,

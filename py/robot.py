@@ -1,10 +1,8 @@
 __author__ = "Sidd Karamcheti, Calvin Huang, Alex Mallery"
 
-try:
-    from pyfrc import wpilib
-except ImportError:
-    import wpilib
 
+import wpilib
+import inspect
 
 import time
 
@@ -25,6 +23,11 @@ class MyRobot(wpilib.SampleRobot):
         self.dt = config.dt
         self.ds = config.ds
         self.teleop_controller = config.teleop_controller
+        #sep = wpilib.SerialPort(57600, wpilib.SerialPort.Port.kOnboard)
+        #for name, obj in inspect.getmembers(wpilib):
+        #    print(obj)
+        #talon8 = wpilib.Talon(8)
+        #self.solenoid1 = wpilib.Solenoid(1)
 
 
     def disabled(self):

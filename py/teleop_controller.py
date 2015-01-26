@@ -24,8 +24,8 @@ class TeleopController:
         Declaration of playback and record controllers.
         Should be moved to config.
         """
-        self.record_controller = RecordController([talon_arr[0], talon_arr[1]])
-        self.playback_controller = PlaybackController(self.instructions, self.talon_arr, revert_controller=self.drive_controller)
+        #self.record_controller = RecordController([talon_arr[0], talon_arr[1]])
+        #self.playback_controller = PlaybackController(self.instructions, self.talon_arr, revert_controller=self.drive_controller)
         """
         Irritating boolean used to screen out joystick input while playing
         back a set of instructions.
@@ -58,7 +58,7 @@ class TeleopController:
         exception to force robotpy to reload the code.
         """
 
-        if state_id == "button2":
+        if state_id == "button20":
             if datum:
                 #raise NameError('Rebooting')
                 #print("Rebooting")
@@ -74,10 +74,10 @@ class TeleopController:
         no other conditions are necessary.
         """
 
-        if state_id == "button9":
+        if state_id == "button90":
             if datum:
                 self.record_controller.engage()
-        if state_id == "button8":
+        if state_id == "button80":
             if datum:
                 self.record_controller.disengage()
                 del self.playback_controller
@@ -92,12 +92,12 @@ class TeleopController:
         extra button presses from causing trouble.
         """
 
-        if state_id == "button7":
+        if state_id == "button70":
             if datum and not self.playback: #prevents extra presses from causing issues
                     self.drive_controller.disengage()
                     self.playback_controller.engage()
                     self.playback = True
-        if state_id == "button6":
+        if state_id == "button60":
             if datum and self.playback: #same as above
                 self.playback_controller.disengage()
                 self.drive_controller.engage()
