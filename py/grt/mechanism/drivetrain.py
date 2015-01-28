@@ -1,4 +1,4 @@
-__author__ = "Calvin Huang, Sidd Karamcheti"
+
 from wpilib import Talon
 
 class DriveTrain:
@@ -31,6 +31,11 @@ class DriveTrain:
         right_output *= self.power
         self.left_motor.set(-left_output)
         self.right_motor.set(+right_output)
+
+    def set_right_motor(self, power):
+        self.right_motor.set(power)
+    def set_left_motor(self, power):
+        self.left_motor.set(power)
 
 
     def set_power(self, power):
