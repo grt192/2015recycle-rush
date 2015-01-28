@@ -1,5 +1,6 @@
 *.py[cod]
 .idea
+*.deploy_cfg
 
 # C extensions
 *.so
