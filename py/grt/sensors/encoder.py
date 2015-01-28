@@ -1,4 +1,3 @@
-__author__ = "Calvin Huang"
 
 from wpilib.interfaces import CounterBase
 from wpilib import Encoder as WEncoder
@@ -25,11 +24,9 @@ class Encoder(Sensor):
         on module number 1, 128 CPR, and with 4x counting.
         """
         super().__init__()
-        self.e = WEncoder(modnum, channel_a, modnum, channel_b, reverse, enctype)
+        self.e = WEncoder(channel_a, channel_b, reverse, enctype)
         self.cpr = cpr
         self.e.setDistancePerPulse(pulse_dist)
-        self.e.start()
-
     def poll(self):
         self.distance = self.e.getDistance()
         self.rate = self.e.getRate()
