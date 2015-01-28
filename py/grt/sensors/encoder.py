@@ -1,3 +1,4 @@
+__author__ = "Calvin Huang"
 
 from wpilib.interfaces import CounterBase
 from wpilib import Encoder as WEncoder
