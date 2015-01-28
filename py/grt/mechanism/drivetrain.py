@@ -1,4 +1,4 @@
-
+__author__ = "Calvin Huang, Sidd Karamcheti"
 from wpilib import Talon
 
 class DriveTrain:
