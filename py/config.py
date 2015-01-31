@@ -22,11 +22,12 @@ from grt.mechanism.betamechs import FourBar, TwoMotorPickup
 from grt.mechanism.elevator import Elevator
 from grt.mechanism.mechcontroller import MechController
 from grt.macro.drive_macro import DriveMacro
+from grt.autonomous.basic_auto import BasicAuto
 #from grt.sensors.switch import Switch
 
 #import grt.networktables as networktables
 
-auto_enabled = False
+auto_enabled = True
 recording_enabled = False
 
 
@@ -34,6 +35,9 @@ recording_enabled = False
 
 
 #Talons
+
+dt_right_alt = Talon(1)
+dt_left_alt = Talon(2)
 
 dt_right = CANTalon(1)
 dt_r2 = CANTalon(2)
@@ -64,16 +68,21 @@ gyro = Gyro(1)
 
 
 
-if auto_enabled:
-	left_encoder = Encoder(4, 5, 1, reverse=True)
-	right_encoder = Encoder(6, 7, 1)
-	dt = DriveTrain(dt_left, dt_right, left_encoder=left_encoder, right_encoder=right_encoder)
-	self.drive_macro = DriveMacro(dt, 10, 2)
-	sp = SensorPoller((gyro, left_encoder, right_encoder))
+#if auto_enabled:
+left_encoder = Encoder(4, 5, 1, reverse=True)
+right_encoder = Encoder(6, 7, 1)
 
-else:
-	dt = DriveTrain(dt_left, dt_right, left_encoder=None, right_encoder=None)
-	sp = SensorPoller((gyro,))
+dt = DriveTrain(dt_left_alt, dt_right_alt, left_encoder=left_encoder, right_encoder=right_encoder)
+	#self.drive_macro = DriveMacro(dt, 10, 2)
+basic_auto = BasicAuto(dt)
+
+
+
+sp = SensorPoller((gyro, left_encoder, right_encoder))
+
+#else:
+	#dt = DriveTrain(dt_left, dt_right, left_encoder=None, right_encoder=None)
+	#sp = SensorPoller((gyro,))
 
 
 

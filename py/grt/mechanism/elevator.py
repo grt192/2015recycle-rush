@@ -1,6 +1,7 @@
 class Elevator:
-    def __init__(self, elevator_motor):
+    def __init__(self, elevator_motor, elevator_encoder):
         self.elevator_motor = elevator_motor
+        self.elevator_encoder = elevator_encoder
 
     def elevate(self):
         self.elevator_motor.set(1)

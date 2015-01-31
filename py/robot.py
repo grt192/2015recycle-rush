@@ -7,7 +7,7 @@ import inspect
 import time
 
 auto = None
-auto_exists = False
+auto_exists = True
 
 
 class MyRobot(wpilib.SampleRobot):
@@ -22,6 +22,7 @@ class MyRobot(wpilib.SampleRobot):
         self.teleop_controller = config.teleop_controller
         global auto
         global auto_exists
+        self.basic_auto = config.basic_auto
         try:
             auto = config.basic_auto
         except AttributeError:
@@ -31,7 +32,7 @@ class MyRobot(wpilib.SampleRobot):
     def disabled(self):
         global auto_exists
         if auto_exists:
-            auto.stop_autonomous()
+            self.basic_auto.stop_autonomous()
         while self.isDisabled():
             tinit = time.time()
             self.sp.poll()
@@ -39,19 +40,20 @@ class MyRobot(wpilib.SampleRobot):
     if auto_exists:
         def autonomous(self):
             global auto
-            auto.run_autonomous()
+            print("Autonomous started")
+            self.basic_auto.run_autonomous()
             while self.isAutonomous() and self.isEnabled():
                 tinit = time.time()
                 self.sp.poll()
                 self.safeSleep(tinit, .04)
-            auto.stop_autonomous()
+            self.basic_auto.stop_autonomous()
     else:
         def autonomous(self):
             pass
     
     def operatorControl(self):
         if auto_exists:
-            auto.stop_autonomous()
+            self.basic_auto.stop_autonomous()
         while self.isOperatorControl() and self.isEnabled():
             tinit = time.time()
             self.teleop_controller.poll()
