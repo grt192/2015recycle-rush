@@ -23,7 +23,7 @@ class Switch(Sensor):
         Normally assumes switches are active low.
         """
         super().__init__()
-        self.s = DigitalInput(module, channel)
+        self.s = DigitalInput(channel)
         self.reverse = reverse
 
     def poll(self):
