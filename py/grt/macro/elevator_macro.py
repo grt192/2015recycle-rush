@@ -50,9 +50,9 @@ class ElevatorMacro(GRTMacro):
         #self.DTController.SetAbsoluteTolerance(self.TOLERANCE)
         #self.DTController.SetOutputRange(-self.MAX_MOTOR_OUTPUT, self.MAX_MOTOR_OUTPUT)
 
-    def engage(self):
-        self.initial_distance = self.elevator_encoder.e.GetDistance()
-        self.run_elevator_macro
+    def initialize(self):
+        self.initial_distance = self.elevator_encoder.e.getDistance()
+        self.run_elevator_macro()
         
 
     """

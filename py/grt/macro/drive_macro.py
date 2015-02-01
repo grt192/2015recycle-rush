@@ -2,7 +2,7 @@ __author__ = 'dhruv and alex m'
 
 from grt.core import GRTMacro
 import wpilib
-import threading
+#import threading
 
 #constants = Constants()
 
@@ -53,11 +53,13 @@ class DriveMacro(GRTMacro):
     def initialize(self):
         self.left_initial_distance = self.left_encoder.e.getDistance()
         self.right_initial_distance = self.right_encoder.e.getDistance()
-        self.right_thread = threading.Thread(target=self.run_right_drive_macro)
-        self.left_thread = threading.Thread(target=self.run_left_drive_macro)
-        self.right_thread.start()
-        print("Starting left thread")
-        self.left_thread.start()
+        #self.right_thread = threading.Thread(target=self.run_right_drive_macro)
+        #self.left_thread = threading.Thread(target=self.run_left_drive_macro)
+        #self.right_thread.start()
+        #print("Starting left thread")
+        #self.left_thread.start()
+        self.run_both_drive_macro()
+        print("running")
 
     """
     def initialize(self):
@@ -95,22 +97,32 @@ class DriveMacro(GRTMacro):
         return (self.left_traveled_distance() + self.right_traveled_distance()) / 2
 
     def run_right_drive_macro(self):
-        while(self.right_traveled_distance() < self.setpoint * .8):
+        while(self.right_traveled_distance() > -self.setpoint * .8):
             self.dt.set_right_motor(1)
-            print("right motor power: 1")
-        while(self.right_traveled_distance() < self.setpoint):
+            #print("right motor power: 1")
+        while(self.right_traveled_distance() > -self.setpoint):
             self.dt.set_right_motor(.5)
-            print("right motor power: .5")
+            #print("right motor power: .5")
         self.dt.set_right_motor(0)
 
     def run_left_drive_macro(self):
-        while(self.left_traveled_distance() < self.setpoint * .8):
+        while(self.left_traveled_distance() > -self.setpoint * .8):
             self.dt.set_left_motor(1)
-            print("left motor power: 1")
-        while(self.left_traveled_distance() < self.setpoint):
+           # print("left motor power: 1")
+        while(self.left_traveled_distance() > -self.setpoint):
             self.dt.set_left_motor(.5)
-            print("left motor power: .5")
+           # print("left motor power: .5")
         self.dt.set_left_motor(0)
+
+    def run_both_drive_macro(self):
+        while(self.get_distance_traveled() > -self.setpoint * .8):
+            self.dt.set_dt_output(.6, .6)
+            print("power: %f" % .6)
+        while(self.get_distance_traveled() > -self.setpoint):
+            self.dt.set_dt_output(.3, .3)
+            print("power: %f" % .3)
+        self.dt.set_dt_output(0, 0)
+
     """
     def perform(self):
         #print("DTerror: " + str(self.DTController.GetError()))

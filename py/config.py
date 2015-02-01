@@ -36,8 +36,8 @@ recording_enabled = False
 
 #Talons
 
-dt_right_alt = Talon(1)
-dt_left_alt = Talon(2)
+#dt_right_alt = Talon(1)
+#dt_left_alt = Talon(2)
 
 dt_right = CANTalon(1)
 dt_r2 = CANTalon(2)
@@ -72,9 +72,14 @@ gyro = Gyro(1)
 left_encoder = Encoder(4, 5, 1, reverse=True)
 right_encoder = Encoder(6, 7, 1)
 
-dt = DriveTrain(dt_left_alt, dt_right_alt, left_encoder=left_encoder, right_encoder=right_encoder)
+dt = DriveTrain(dt_left, dt_right, left_encoder=left_encoder, right_encoder=right_encoder)
 	#self.drive_macro = DriveMacro(dt, 10, 2)
-basic_auto = BasicAuto(dt)
+
+elevator_motor = CANTalon(6)
+elevator_encoder = Encoder(2, 3, 1)
+elevator = Elevator(elevator_motor, elevator_encoder)
+
+basic_auto = BasicAuto(dt, elevator)
 
 
 
@@ -115,8 +120,7 @@ else:
 fourbar_motor = CANTalon(12)
 fourbar = FourBar(fourbar_motor)
 
-elevator_motor = CANTalon(6)
-elevator = Elevator(elevator_motor)
+
 
 motor1 = CANTalon(5)
 motor2 = CANTalon(11)

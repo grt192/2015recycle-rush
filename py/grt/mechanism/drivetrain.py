@@ -31,11 +31,14 @@ class DriveTrain:
         right_output *= self.power
         self.left_motor.set(-left_output)
         self.right_motor.set(+right_output)
+        #print("left output %f" % left_output)
+        #print("right travel: %f" % self.right_encoder.distance)
+        #print("left travel: %f" % self.left_encoder.distance)
 
     def set_right_motor(self, power):
-        self.right_motor.set(-power)
+        self.right_motor.set(power)
     def set_left_motor(self, power):
-        self.left_motor.set(power)
+        self.left_motor.set(-power)
 
 
     def set_power(self, power):
