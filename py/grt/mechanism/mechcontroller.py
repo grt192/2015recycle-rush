@@ -33,10 +33,11 @@ class MechController:
                 self.fourbar.elevate_speed(-.8)
             else:
                 self.fourbar.stop()
-        if state_id == 'a_button' and self.aligner:
+        if state_id == 'a_button' and self.aligner and not self.aligner.aligning:
             if datum:
-                self.aligner.align()
                 print('THE A BUTTON HAS BEEN PRESSED')
+                self.aligner.align()
+                
 
 
     def _driver_joystick_listener(self, sensor, state_id, datum):

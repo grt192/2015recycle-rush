@@ -53,11 +53,17 @@ dt = DriveTrain(dt_left, dt_right, left_encoder=None, right_encoder=None)
 gyro = Gyro(1)
 sp = SensorPoller((gyro,))
 
+#Digital inputs
+l_switch = DigitalInput(8)
+r_switch = DigitalInput(9)
+
+#Macros
+a_macro = AlignMacro(dt, l_switch, r_switch, 10) 
 
 # Drive Controllers
 driver_stick = Attack3Joystick(0)
 xbox_controller = XboxJoystick(1)
-ac = ArcadeDriveController(dt, driver_stick)
+ac = ArcadeDriveController(dt, driver_stick, aligner=a_macro)
 hid_sp = SensorPoller((driver_stick, xbox_controller))  # human interface devices
 
 
@@ -73,14 +79,11 @@ motor1 = CANTalon(12)
 motor2 = CANTalon(11)
 two_motor_pickup = TwoMotorPickup(motor1, motor2)
 
-#Digital inputs
-l_switch = DigitalInput(8)
-r_switch = DigitalInput(9)
 
-#Macros
-a_macro = AlignMacro(dt, l_switch, r_switch, 10) 
+
+
 #make sure to pass the align macro (once defined) to the mech controller
-mc = MechController(elevator, fourbar, two_motor_pickup, driver_stick, xbox_controller, a_macro)
+mc = MechController(elevator, fourbar, two_motor_pickup, driver_stick, xbox_controller)
 
 ds = DriverStation.getInstance()
 
