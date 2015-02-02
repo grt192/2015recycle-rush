@@ -18,20 +18,22 @@ class MechController:
         if state_id == 'l_y_axis':
             if datum:
                 if abs(datum) > .05:
-                    self.two_motor_pickup.operate(datum)
+                    self.fourbar.elevate_speed(datum)
                 else:
-                    self.two_motor_pickup.stop()
+                    self.fourbar.stop()
+                    
         if state_id == "l_shoulder":
             if datum:
-                self.fourbar.elevate_speed(.8)
+                self.two_motor_pickup.operate(.5)
+                
             else:
-                self.fourbar.stop()
+                self.two_motor_pickup.stop()
 
         if state_id == "r_shoulder":
             if datum:
-                self.fourbar.elevate_speed(-.8)
+                self.two_motor_pickup.operate(.5)
             else:
-                self.fourbar.stop()
+                self.two_motor_pickup.stop()
 
 
     def _driver_joystick_listener(self, sensor, state_id, datum):

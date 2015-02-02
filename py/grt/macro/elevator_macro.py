@@ -92,15 +92,20 @@ class ElevatorMacro(GRTMacro):
     def run_elevator_macro(self):
         if(self.setpoint>0):
             while(self.traveled_distance() < self.setpoint * .8):
+                print("travel: %f" % self.traveled_distance())
                 self.elevator.elevate_speed(1)
             while(self.traveled_distance() < self.setpoint):
+                print("half power travel: %f" % self.traveled_distance())
                 self.elevator.elevate_speed(.5)
+            self.elevator.stop()
         elif(self.setpoint<0):
             while(self.traveled_distance() > self.setpoint * .8):
+                print("travel: %f" % self.traveled_distance())
                 self.elevator.elevate_speed(-1)
             while(self.traveled_distance() > self.setpoint):
+                print("half power travel: %f" % self.traveled_distance())
                 self.elevator.elevate_speed(-.5)
-        self.elevator.stop(0)
+            self.elevator.stop()
     """
     def perform(self):
         #print("DTerror: " + str(self.DTController.GetError()))

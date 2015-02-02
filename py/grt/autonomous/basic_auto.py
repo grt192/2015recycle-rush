@@ -19,9 +19,9 @@ class BasicAuto(MacroSequence):
 
     def __init__(self, dt, elevator):
 
-        self.elevator_macro = ElevatorMacro(elevator, 0.5, 1)
-        self.drive_macro = DriveMacro(dt, 700, 30) 
+        self.elevator_macro = ElevatorMacro(elevator, 50, 1)
+        #self.drive_macro = DriveMacro(dt, 700, 30) 
         self.wait_macro = GRTMacro(0.5)  # blank macro just waits
-        self.elevator_macro = ElevatorMacro(elevator, -0.5, 1)
-        self.macros = [self.elevator_macro, self.drive_macro, self.wait_macro, self.elevator_macro]
+        #self.elevator_macro = ElevatorMacro(elevator, -50, 1)
+        self.macros = [self.elevator_macro, self.wait_macro]
         super().__init__(macros=self.macros)  

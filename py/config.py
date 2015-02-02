@@ -76,14 +76,14 @@ dt = DriveTrain(dt_left, dt_right, left_encoder=left_encoder, right_encoder=righ
 	#self.drive_macro = DriveMacro(dt, 10, 2)
 
 elevator_motor = CANTalon(6)
-elevator_encoder = Encoder(2, 3, 1)
+elevator_encoder = Encoder(0, 1, 1)
 elevator = Elevator(elevator_motor, elevator_encoder)
 
 basic_auto = BasicAuto(dt, elevator)
 
 
 
-sp = SensorPoller((gyro, left_encoder, right_encoder))
+sp = SensorPoller((gyro, left_encoder, right_encoder, elevator_encoder))
 
 #else:
 	#dt = DriveTrain(dt_left, dt_right, left_encoder=None, right_encoder=None)
@@ -117,13 +117,13 @@ else:
 
 #Mechs
 
-fourbar_motor = CANTalon(12)
+fourbar_motor = CANTalon(5)
 fourbar = FourBar(fourbar_motor)
 
 
 
-motor1 = CANTalon(5)
-motor2 = CANTalon(11)
+motor1 = CANTalon(11)
+motor2 = CANTalon(12)
 two_motor_pickup = TwoMotorPickup(motor1, motor2)
 
 mc = MechController(elevator, fourbar, two_motor_pickup, driver_stick, xbox_controller)
