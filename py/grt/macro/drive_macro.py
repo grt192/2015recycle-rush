@@ -122,6 +122,8 @@ class DriveMacro(GRTMacro):
             self.dt.set_dt_output(.3, .3)
             print("power: %f" % .3)
         self.dt.set_dt_output(0, 0)
+        self.kill()
+        print("Ended")
 
     """
     def perform(self):

@@ -5,6 +5,7 @@ Config File for Robot
 
 from wpilib import Solenoid, Compressor, DriverStation, CANTalon
 import wpilib
+import math
 
 from grt.sensors.attack_joystick import Attack3Joystick
 from grt.sensors.xbox_joystick import XboxJoystick
@@ -69,14 +70,14 @@ gyro = Gyro(1)
 
 
 #if auto_enabled:
-left_encoder = Encoder(4, 5, 1, reverse=True)
-right_encoder = Encoder(6, 7, 1)
+left_encoder = Encoder(4, 5, distance_per_rev=(4 * math.pi), reverse=True)
+right_encoder = Encoder(6, 7, distance_per_rev=(4*math.pi))
 
 dt = DriveTrain(dt_left, dt_right, left_encoder=left_encoder, right_encoder=right_encoder)
 	#self.drive_macro = DriveMacro(dt, 10, 2)
 
 elevator_motor = CANTalon(6)
-elevator_encoder = Encoder(0, 1, 1)
+elevator_encoder = Encoder(0, 1, distance_per_rev=1, cpr=1)
 elevator = Elevator(elevator_motor, elevator_encoder)
 
 basic_auto = BasicAuto(dt, elevator)
