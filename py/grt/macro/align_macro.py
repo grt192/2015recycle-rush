@@ -26,7 +26,7 @@ class AlignMacro(GRTMacro):
 		ramming_power = 0.3
 		turning_power = 0.3
 		weak_turning = 0.1
-		while(self.l_switch.get() and self.r_switch.get()):
+		while(self.l_switch.get() and self.r_switch.get() and self.aligning):
 			#double check to make sure if this is the correct way to 
 			#see if limit switches are pressed. 
 			#"While neither switch is pressed" (i.e. both Gets give True)
@@ -43,7 +43,7 @@ class AlignMacro(GRTMacro):
 		elif self.l_switch.get():
 			#the right switch is pressed (because the left is not)
 			#shut off the right side to turn into position
-			while self.l_switch.get():
+			while self.l_switch.get() and self.aligning:
 			    self.dt.set_dt_output(turning_power, weak_turning)
 			self.dt.set_dt_output(0, 0)
 			#come to a stop
@@ -52,11 +52,15 @@ class AlignMacro(GRTMacro):
 		else:
 			#the left switch is pressed (because the right is not)
 			#shut off the left side to turn into position
-			while self.r_switch.get():
+			while self.r_switch.get() and self.aligning:
 			    self.dt.set_dt_output(weak_turning, turning_power)
 			self.dt.set_dt_output(0, 0)
 			#come to a stop
+		self.aligning = False
 		print('ALIGNED')
+	def stop(self):
+		self.aligning = False
+		self.set_dt_output(0, 0)
 
 
 

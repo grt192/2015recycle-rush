@@ -30,7 +30,9 @@ class ArcadeDriveController:
             if datum:
                 print('THE TRIGGER HAS BEEN PRESSED')
                 self.aligner.align()
-                self.aligner.aligning = False
+            else:
+                self.aligner.stop()
+                
         
 
     def engage(self):
