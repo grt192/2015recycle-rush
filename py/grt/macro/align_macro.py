@@ -4,8 +4,7 @@ from grt.core import GRTMacro
 class AlignMacro(GRTMacro):
 	'''
 	Using limit switch info, automatically
-	align the hook mechanism with a tote 
-	such that it can pick it up. 
+	align the pickup with a tote.  
 	'''
 
 	def __init__(self, dt, l_switch, r_switch, timeout):
@@ -16,15 +15,17 @@ class AlignMacro(GRTMacro):
 		self.r_switch = r_switch
 		self.aligning = False
 
-
+	def initialize(self):
+		self.align()
+		self.kill()
 	def align(self):
 		'''
 		Have the robot align itself by ramming into a box
 		when it is reasonably close to it
 		'''
 		self.aligning = True
-		ramming_power = 0.3
-		turning_power = 0.3
+		ramming_power = 0.2
+		turning_power = 0.2
 		weak_turning = 0.1
 		while(self.l_switch.get() and self.r_switch.get() and self.aligning):
 			#double check to make sure if this is the correct way to 
@@ -58,9 +59,9 @@ class AlignMacro(GRTMacro):
 			#come to a stop
 		self.aligning = False
 		print('ALIGNED')
-	def stop(self):
+	def die(self):
 		self.aligning = False
-		self.set_dt_output(0, 0)
+		self.dt.set_dt_output(0, 0)
 
 
 

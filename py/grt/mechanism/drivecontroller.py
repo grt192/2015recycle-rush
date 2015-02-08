@@ -29,9 +29,15 @@ class ArcadeDriveController:
         if state_id == 'trigger' and self.aligner and not self.aligner.aligning:
             if datum:
                 print('THE TRIGGER HAS BEEN PRESSED')
-                self.aligner.align()
+                self.aligner.execute()
             else:
-                self.aligner.stop()
+                print('STOP ALIGNING')
+                #self.aligner.kill()
+        if state_id == 'button3' and self.aligner and self.aligner.aligning:
+            if datum: 
+                print('BUTTON 3 HAS BEEN PRESSED')
+                self.aligner.kill()
+
                 
         
 
