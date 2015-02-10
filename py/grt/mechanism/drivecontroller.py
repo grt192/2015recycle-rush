@@ -20,23 +20,20 @@ class ArcadeDriveController:
         self.engage()
 
     def _joylistener(self, sensor, state_id, datum):
-        if sensor in (self.l_joystick, self.r_joystick) and state_id in ('x_axis', 'y_axis') and state_id != 'trigger':
+        if sensor in (self.l_joystick, self.r_joystick) and state_id in ('x_axis', 'y_axis'):
             power = -self.l_joystick.y_axis
             turnval = self.r_joystick.x_axis if self.r_joystick else self.l_joystick.x_axis
             # get turn value from r_joystick if it exists, else get it from l_joystick
             self.dt.set_dt_output(power + turnval,
                                   power - turnval)
-        if state_id == 'trigger' and self.aligner and not self.aligner.aligning:
+        if state_id == 'trigger' and self.aligner: #not self.aligner.running:
             if datum:
                 print('THE TRIGGER HAS BEEN PRESSED')
-                self.aligner.execute()
+                self.aligner.run()
             else:
                 print('STOP ALIGNING')
-                #self.aligner.kill()
-        if state_id == 'button3' and self.aligner and self.aligner.aligning:
-            if datum: 
-                print('BUTTON 3 HAS BEEN PRESSED')
                 self.aligner.kill()
+        
 
                 
         

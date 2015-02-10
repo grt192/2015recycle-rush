@@ -218,32 +218,32 @@ class GRTMacro(object):
         periodically until timeout or completion.
         After completion, calls die().
         """
-        if not self.started:
-            self.started = True
-            self.running = True
+        #if not self.started:
+        self.started = True
+        self.running = True
 
-            def _timeout():
-                self.timed_out = True
-                self.kill()
+        def _timeout():
+            self.timed_out = True
+            self.kill()
 
-            if self.timeout:
-                timeout_timer = threading.Timer(self.timeout, _timeout)
-                timeout_timer.start()
-            else:
-                timeout_timer = None
+        if self.timeout:
+            timeout_timer = threading.Timer(self.timeout, _timeout)
+            timeout_timer.start()
+        else:
+            timeout_timer = None
 
-            try:
-                self.initialize()
-                while self.running:
-                    self.perform()
-                    time.sleep(self.poll_time)
-            except StopIteration:
-                pass
+        try:
+            self.initialize()
+            while self.running:
+                self.perform()
+                time.sleep(self.poll_time)
+        except StopIteration:
+            pass
 
-            self.running = False
-            if timeout_timer:
-                timeout_timer.cancel()
-            self.die()
+        self.running = False
+        if timeout_timer:
+            timeout_timer.cancel()
+        self.die()
 
     def reset(self):
         """
