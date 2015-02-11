@@ -3,27 +3,28 @@ Config File for Robot
 """
 
 
-from wpilib import Solenoid, Compressor, DriverStation, CANTalon
+from wpilib import Solenoid, Compressor, DriverStation, DigitalInput
 import wpilib
 import math
+
+from wpilib import Solenoid, Compressor, DriverStation, CANTalon, DigitalInput
 
 from grt.sensors.attack_joystick import Attack3Joystick
 from grt.sensors.xbox_joystick import XboxJoystick
 from grt.sensors.gyro import Gyro
-from grt.core import SensorPoller #, Constants
+from grt.core import SensorPoller
 from grt.mechanism.drivetrain import DriveTrain
 from grt.mechanism.drivecontroller import ArcadeDriveController
 from grt.mechanism.motorset import Motorset
 from grt.sensors.ticker import Ticker
 from grt.sensors.encoder import Encoder
-from teleop_controller import TeleopController
 from grt.sensors.talon import Talon
-from grt.mechanism.betamechs import Pickup
 from grt.mechanism.betamechs import FourBar, TwoMotorPickup
 from grt.mechanism.elevator import Elevator
 from grt.mechanism.mechcontroller import MechController
-from grt.macro.drive_macro import DriveMacro
+#from grt.macro.align_macro import AlignMacro
 from grt.autonomous.basic_auto import BasicAuto
+from teleop_controller import TeleopController
 #from grt.sensors.switch import Switch
 
 #import grt.networktables as networktables
@@ -76,9 +77,14 @@ right_encoder = Encoder(6, 7, distance_per_rev=(4*math.pi))
 dt = DriveTrain(dt_left, dt_right, left_encoder=left_encoder, right_encoder=right_encoder)
 	#self.drive_macro = DriveMacro(dt, 10, 2)
 
+#Digital inputs
+l_switch = DigitalInput(8)
+r_switch = DigitalInput(9)
+
+
 elevator_motor = CANTalon(6)
-elevator_encoder = Encoder(0, 1, distance_per_rev=1, cpr=1)
-elevator = Elevator(elevator_motor, elevator_encoder)
+elevator_encoder = Encoder(0, 1, distance_per_rev=1, cpr=1, reverse=True)
+elevator = Elevator(elevator_motor, elevator_encoder, l_switch, r_switch)
 
 basic_auto = BasicAuto(dt, elevator)
 

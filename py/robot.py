@@ -64,7 +64,8 @@ class MyRobot(wpilib.SampleRobot):
         if tdif > 0:
             time.sleep(tdif)
         if tdif <= 0:
-            print("Code running slowly!")
+            #print("Code running slowly!")
+            pass
 
 
 if __name__ == "__main__":

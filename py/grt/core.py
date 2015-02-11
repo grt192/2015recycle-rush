@@ -1,6 +1,7 @@
 __author__ = "Calvin Huang"
 import threading
 import time
+import multiprocessing
 
 
 class Sensor(object):
@@ -195,13 +196,13 @@ class GRTMacro(object):
         self.daemon = daemon
         self._disabled_flag = threading.Event()
 
-    def run(self):
+    def run_threaded(self):
         """
         Start macro in new thread.
         See execute() for more details on macro execution.
         """
-        self.thread = threading.Thread(target=self.execute)
-        self.thread.start()
+        self.process = threading.Thread(target=self.run_linear)
+        self.process.start()
 
     def _wait(self, duration):
         """
@@ -214,39 +215,41 @@ class GRTMacro(object):
         if not self.running:
             raise StopIteration()
 
-    def execute(self):
+    def run_linear(self):
         """
         Starts macro in current thread.
         First calls initialize(), then calls perform()
         periodically until timeout or completion.
         After completion, calls die().
         """
-        if not self.started:
-            self.started = True
-            self.running = True
+        #if not self.started:
+        self.started = True
+        self.running = True
 
-            def _timeout():
-                self.timed_out = True
-                self.kill()
+        def _timeout():
+            self.timed_out = True
+            self.terminate()
 
-            if self.timeout:
-                timeout_timer = threading.Timer(self.timeout, _timeout)
-                timeout_timer.start()
-            else:
-                timeout_timer = None
+        if self.timeout:
+            timeout_timer = threading.Timer(self.timeout, _timeout)
+            timeout_timer.start()
+        else:
+            timeout_timer = None
 
-            try:
-                self.initialize()
-                while self.running:
-                    self.perform()
-                    time.sleep(self.poll_time)
-            except StopIteration:
-                pass
+        try:
+            self.macro_initialize()
+            while self.running:
+                self.macro_periodic()
+                time.sleep(self.poll_time)
+        except StopIteration:
+            pass
 
-            self.running = False
-            if timeout_timer:
-                timeout_timer.cancel()
-            self.die()
+        self.running = False
+        if timeout_timer:
+            timeout_timer.cancel()
+        self.macro_stop()
+        print("Thread ending")
+        print("Running threads: ",threading.active_count())
 
     def reset(self):
         """
@@ -254,27 +257,37 @@ class GRTMacro(object):
         """
         self.running = self.started = self.timed_out = False
 
-    def initialize(self):
+    def macro_initialize(self):
         """
         Run once, at the beginning of macro execution.
         """
         pass
 
-    def perform(self):
+    def macro_periodic(self):
         """
         Macro execution body, run periodically.
         """
         pass
 
-    def die(self):
+    def macro_stop(self):
         """
         Cleanup after macro execution.
         """
         pass
 
-    def kill(self):
+    def terminate(self):
         """
         Stop macro execution.
         """
         if self.running:
             self.running = False
+        self.macro_stop()
+
+    def emergency_stop(self):
+        """
+        To be called only to stop a runaway macro.
+        Will possibly leak large amounts of memory.
+        """
+        self.terminate()
+        self.process.terminate()
+
