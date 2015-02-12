@@ -78,8 +78,10 @@ dt = DriveTrain(dt_left, dt_right, left_encoder=left_encoder, right_encoder=righ
 
 elevator_motor1 = CANTalon(11)
 elevator_motor2 = CANTalon(12)
+elevator_motor2.changeControlMode(CANTalon.ControlMode.Follower)
+elevator_motor2.set(11)
 elevator_encoder = Encoder(0, 1, distance_per_rev=1, cpr=1)
-elevator = Elevator(elevator_motor, elevator_encoder)
+elevator = Elevator(elevator_motor1, elevator_encoder)
 
 basic_auto = BasicAuto(dt, elevator)
 
@@ -103,7 +105,7 @@ driver_stick = Attack3Joystick(0)
 xbox_controller = XboxJoystick(1)
 ac = ArcadeDriveController(dt, driver_stick)
 hid_sp = SensorPoller((driver_stick, xbox_controller))  # human interface devices
-
+"""
 if recording_enabled:
 	from record_controller import RecordController, PlaybackController
 	from collections import OrderedDict
@@ -114,8 +116,8 @@ if recording_enabled:
 	teleop_controller = TeleopController(sp, hid_sp, driver_stick, ac, record_controller, playback_controller)
 else:
 	teleop_controller = TeleopController(sp, hid_sp)
-
-m_sp = SensorPoller(sp, hid_sp)
+"""
+m_sp = SensorPoller((sp, hid_sp))
 
 
 #Mechs
@@ -124,12 +126,12 @@ fourbar_motor = CANTalon(5)
 fourbar = FourBar(fourbar_motor)
 
 
-
+"""
 motor1 = CANTalon(11)
 motor2 = CANTalon(12)
 two_motor_pickup = TwoMotorPickup(motor1, motor2)
-
-mc = MechController(elevator, fourbar, two_motor_pickup, driver_stick, xbox_controller)
+"""
+mc = MechController(elevator, fourbar, driver_stick, xbox_controller)
 
 ds = DriverStation.getInstance()
 

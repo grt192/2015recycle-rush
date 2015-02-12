@@ -56,7 +56,7 @@ class MyRobot(wpilib.SampleRobot):
             self.basic_auto.stop_autonomous()
         while self.isOperatorControl() and self.isEnabled():
             tinit = time.time()
-            self.teleop_controller.poll()
+            self.m_sp.poll()
             self.safeSleep(tinit, .04)
             
     def safeSleep(self, tinit, duration):
