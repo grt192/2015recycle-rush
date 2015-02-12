@@ -39,27 +39,21 @@ class IMU(SensorBase):
     DEFAULT_GYRO_FSR_DPS    = 2000
     
     serial_port = Serial()
-    yaw_history[]
-    next_yaw_history_index
-    user_yaw_offset
-    m_thread
-    update_rate_hz
+    next_yaw_history_index = 0
+    user_yaw_offset = 0
+    update_rate_hz = 0
 
-    volatile float yaw
-    volatile float pitch
-    volatile float roll
-    volatile float compass_heading
-    volatile int update_count = 0
-    volatile int byte_count = 0
-    volatile float nav6_yaw_offset_degrees
-    volatile short accel_fsr_g
-    volatile short gyro_fsr_dps
-    volatile short flags    
+    
+    compass_heading = 0
+    update_count = 0
+    byte_count = 0
+    nav6_yaw_offset_degrees2e = 0
+    
+    
 
-    double last_update_time
-    boolean stop = false
-    private IMUProtocol.YPRUpdate ypr_update_data
-    protected byte update_type = IMUProtocol.MSGID_YPR_UPDATE
+    last_update_time = 0
+    stop = false
+    update_type = IMUProtocol.MSGID_YPR_UPDATE
     """
     /**
      * Constructs the IMU class, overriding the default update rate
@@ -73,24 +67,24 @@ class IMU(SensorBase):
      */
      """
     def __init__(serial_port, update_rate_hz = None):
-        ypr_update_data = IMUProtocol.YPRUpdate()
+        self.ypr_update_data = IMUProtocol.YPRUpdate()
         if update_rate_hz:
             self.update_rate_hz = update_rate_hz
         else:
             self.update_rate_hz = DEFAULT_UPDATE_RATE_HZ
-        flags = 0
-        accel_fsr_g = DEFAULT_ACCEL_FSR_G
-        gyro_fsr_dps = DEFAULT_GYRO_FSR_DPS
+        self.flags = 0
+        self.accel_fsr_g = DEFAULT_ACCEL_FSR_G
+        self.gyro_fsr_dps = DEFAULT_GYRO_FSR_DPS
         self.serial_port = serial_port
         #yaw_history = [YAW_HISTORY_LENGTH]
-        yaw = 0.0
-        pitch = 0.0
-        roll = 0.0
+        self.yaw = 0.0
+        self.pitch = 0.0
+        self.roll = 0.0
         try:
             #serial_port.reset()
         except SerialError:
             ex.printStackTrace()
-        initIMU()
+        self.initIMU()
         m_thread = threading.Thread(target = self.run) #fix this!
         m_thread.start()       
     
@@ -109,7 +103,7 @@ class IMU(SensorBase):
         // Transmit immediately
         """
         self.initializeYawHistory()
-        user_yaw_offset = 0
+        self.user_yaw_offset = 0
 
         #// set the nav6 into the desired update mode
         stream_command_buffer = [] #byte stream_command_buffer[] = new byte[256]

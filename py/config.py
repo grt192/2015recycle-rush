@@ -76,7 +76,8 @@ right_encoder = Encoder(6, 7, distance_per_rev=(4*math.pi))
 dt = DriveTrain(dt_left, dt_right, left_encoder=left_encoder, right_encoder=right_encoder)
 	#self.drive_macro = DriveMacro(dt, 10, 2)
 
-elevator_motor = CANTalon(6)
+elevator_motor1 = CANTalon(11)
+elevator_motor2 = CANTalon(12)
 elevator_encoder = Encoder(0, 1, distance_per_rev=1, cpr=1)
 elevator = Elevator(elevator_motor, elevator_encoder)
 
@@ -114,6 +115,7 @@ if recording_enabled:
 else:
 	teleop_controller = TeleopController(sp, hid_sp)
 
+m_sp = SensorPoller(sp, hid_sp)
 
 
 #Mechs

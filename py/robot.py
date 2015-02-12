@@ -19,7 +19,7 @@ class MyRobot(wpilib.SampleRobot):
         self.hid_sp = config.hid_sp
         self.dt = config.dt
         self.ds = config.ds
-        self.teleop_controller = config.teleop_controller
+        self.m_sp = config.m_sp
         global auto
         global auto_exists
         self.basic_auto = config.basic_auto

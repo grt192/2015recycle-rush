@@ -1,64 +1,141 @@
-"""
-Module for various drivetrain control mechanisms.
-Listens to Attack3Joysticks, not wpilib.Joysticks.
-"""
+from grt.core import Constants
+import math
 
 
 class ArcadeDriveController:
-    """
-    Class for controlling DT in arcade drive mode, with one or two joysticks.
-    """
 
-    def __init__(self, dt, l_joystick, r_joystick=None):
-        """
-        Initialize arcade drive controller with a DT and up to two joysticks.
-        """
+    def __init__(self, dt, stick, secondstick = None):
+
         self.dt = dt
-        self.l_joystick = l_joystick
-        self.r_joystick = r_joystick
-        self.engage()
+        self.stick = stick
+
+        self.isHighGear = False
+        self.left = 0
+        self.right = 0
+        self.wheel = 0
+        self.throttle = 0
+        self.oldWheel = 0
+        self.negInertia = 0
+        self.linearPower = 0
+        self.angularPower = 0
+        self.negInertiaPower = 0
+        self.negInertiaAccumulator = 0
+
+        self.throttleDeadband = 0.02
+        self.wheelDeadband = 0.02
+        self.highGear = 0.7
+        self.lowGear = 0.6
+        self.highGearScalar = 3
+        self.lowGearScalar = 2
+
+        stick.add_listener(self._joylistener)
+
+    def _handleDeadband(self):
+
+        '''
+
+        Gets the throttle and wheel values. Handles deadzones.
+
+        '''
+
+        self.throttle = -1 * self.stick.y_axis
+        self.throttle = 0 if (abs(self.throttle) < self.throttleDeadband) else self.throttle
+        self.wheel    = self.stick.x_axis
+        self.wheel    = 0 if (abs(self.wheel) < self.wheelDeadband) else self.wheel
+
+    def _handleNonlinearity(self):
+
+        '''
+
+        Scales the wheel
+
+        '''
+
+        if(self.isHighGear):
+            wheelNonLinearity = self.highGear
+            self.wheel = math.sin(math.pi / 2.0 * wheelNonLinearity * self.wheel) / math.sin(math.pi / 2.0 * wheelNonLinearity)
+            self.wheel = math.sin(math.pi / 2.0 * wheelNonLinearity * self.wheel) / math.sin(math.pi / 2.0 * wheelNonLinearity)
+        else:
+            wheelNonLinearity = self.lowGear
+            self.wheel = math.sin(math.pi / 2.0 * wheelNonLinearity * self.wheel) / math.sin(math.pi / 2.0 * wheelNonLinearity)
+            self.wheel = math.sin(math.pi / 2.0 * wheelNonLinearity * self.wheel) / math.sin(math.pi / 2.0 * wheelNonLinearity)
+            self.wheel = math.sin(math.pi / 2.0 * wheelNonLinearity * self.wheel) / math.sin(math.pi / 2.0 * wheelNonLinearity)
+
+    def _handleNegativeInertia(self):
+
+        '''
+
+        Negative inertia. Obstensibly makes stuff stop turning faster. Basically magnifies the rate at which the wheel changes.
+
+        '''
+
+        self.negInertia = self.wheel - self.oldWheel
+        self.oldWheel = self.wheel
+
+        self.negInertiaPower = self.negInertia * (self.highGearScalar if self.isHighGear else self.lowGearScalar)
+        self.negInertiaAccumulator += self.negInertiaPower
+        self.wheel += self.negInertiaAccumulator
+
+        if(self.negInertiaAccumulator > 1):
+            self.negInertiaAccumulator -= 1
+        elif(self.negInertiaAccumulator < -1):
+            self.negInertiaAccumulator += 1
+        else:
+            self.negInertiaAccumulator = 0
+
+    def _blendInputs(self):
+
+        '''
+
+        Blends the modified wheel and throttle to get left and right PWM values
+
+        '''
+
+        self.linearPower = self.throttle
+        self.angularPower = self.wheel * abs(self.throttle)
+
+        self.left = self.linearPower
+        self.right = self.linearPower
+
+        self.left -= self.angularPower
+        self.right += self.angularPower
+
+    def _handleOverpower(self):
+
+        '''
+
+        Handles situations where the left or right PWM values are greater than 1
+
+        '''
+
+        if (self.left > 1.0):
+            self.right = self.right / self.left
+            self.left = 1.0
+        if (self.left < -1.0):
+            self.right = self.right / abs(self.left)
+            self.left = -1.0
+        if (self.right > 1.0):
+            self.left = self.left / self.right
+            self.right = 1.0
+        if (self.right < -1.0):
+            self.left = self.left / abs(self.right)
+            self.right = -1.0
 
     def _joylistener(self, sensor, state_id, datum):
-        if sensor in (self.l_joystick, self.r_joystick) and state_id in ('x_axis', 'y_axis'):
-            power = -self.l_joystick.y_axis
-            turnval = self.r_joystick.x_axis if self.r_joystick else self.l_joystick.x_axis
-            # get turn value from r_joystick if it exists, else get it from l_joystick
-            #print("Power: %f" % power)
 
-            self.dt.set_dt_output(power + turnval,
-                                  power - turnval)
-        elif sensor == self.l_joystick and state_id == 'trigger':
+        if state_id in ('x_axis', 'y_axis'):
+
+            self._handleDeadband()
+            self._handleNegativeInertia()
+            self._handleNonlinearity()
+            self._blendInputs()
+            self._handleOverpower()
+            self.dt.set_dt_output(self.left, self.right)
+
+        elif state_id == 'trigger':
             if datum:
+                self.isHighGear = True
                 self.dt.upshift()
             else:
+                self.isHighGear = False
                 self.dt.downshift()
-
-    def engage(self):
-            self.l_joystick.add_listener(self._joylistener)
-            if self.r_joystick:
-                self.r_joystick.add_listener(self._joylistener)
-
-    def disengage(self):
-            self.l_joystick.remove_listener(self._joylistener)
-            if self.r_joystick:
-                self.r_joystick.remove_listener(self._joylistener)
-
-class TankDriveController:
-    """
-    Class for controlling DT in tank drive mode with two joysticks.
-    """
-
-    def __init__(self, dt, l_joystick, r_joystick):
-        """
-        Initializes self with a DT and left and right joysticks.
-        """
-        self.dt = dt
-        self.l_joystick = l_joystick
-        self.r_joystick = r_joystick
-        l_joystick.add_listener(self._joylistener)
-        r_joystick.add_listener(self._joylistener)
-
-    def _joylistener(self, sensor, state_id, datum):
-        if sensor in (self.l_joystick, self.r_joystick) and state_id in ('x_axis', 'y_axis'):
-            self.dt.set_dt_output(self.l_joystick.y_axis,
-                                  self.r_joystick.y_axis)
