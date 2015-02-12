@@ -65,6 +65,9 @@ class RecordMacro(GRTMacro):
 				i += 1
 			#wpilib.Wait(.1)
 			time.sleep(.1 - (time.time() - tinit))
+	def save(self, file_name):
+            with open(file_name, 'w') as f:
+                f.write('instructions = ' + str(self.instructions)) 
 
 class PlaybackMacro(GRTMacro):
 
@@ -160,3 +163,7 @@ class PlaybackMacro(GRTMacro):
 			self.macro_stop()
 			self.terminate()
 			#self.disengage()
+	def load(self, file_name):
+            #assumes we have a python file (*.py)
+            execfile(filename)
+            self.instructions = instructions
