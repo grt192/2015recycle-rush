@@ -7,7 +7,8 @@ import time
 
 
 class ReleaseMacro(GRTMacro):
-    def __init__(self, elevator, dt):
+    def __init__(self, elevator, dt, timeout=None):
+        super().__init__(timeout)
         self.left_switch = elevator.left_switch
         self.right_switch = elevator.right_switch
         self.elevator_motor = elevator.elevator_motor #change how the motor is being called!
@@ -189,7 +190,7 @@ class ElevatorMacro(GRTMacro):
                 self.elevator.elevate_speed(.1)
             if self.ERROR <= 50:
                 #self.ERROR = 0
-                print("Stopped +")
+                #print("Stopped +")
                 self.macro_stop()
         elif self.ERROR < 0:
             #print("Started")
@@ -203,7 +204,7 @@ class ElevatorMacro(GRTMacro):
                 self.elevator.elevate_speed(-.1)
             if abs(self.ERROR) <= 50:
                 #self.ERROR = 0
-                print("Stopped -")
+                #print("Stopped -")
                 self.macro_stop()
 
 

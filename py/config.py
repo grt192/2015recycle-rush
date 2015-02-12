@@ -25,6 +25,9 @@ from grt.mechanism.mechcontroller import MechController
 #from grt.macro.align_macro import AlignMacro
 from grt.autonomous.basic_auto import BasicAuto
 from teleop_controller import TeleopController
+from record_controller import RecordMacro, PlaybackMacro
+from collections import OrderedDict
+
 #from grt.sensors.switch import Switch
 
 #import grt.networktables as networktables
@@ -68,6 +71,11 @@ dt_l4.set(7)
 
 gyro = Gyro(1)
 
+talon_arr = [dt_right, dt_left]
+record_macro = RecordMacro(talon_arr)
+
+
+
 
 
 #if auto_enabled:
@@ -86,7 +94,8 @@ elevator_motor = CANTalon(6)
 elevator_encoder = Encoder(0, 1, distance_per_rev=1, cpr=1, reverse=True)
 elevator = Elevator(elevator_motor, elevator_encoder, l_switch, r_switch)
 
-basic_auto = BasicAuto(dt, elevator)
+basic_auto = BasicAuto(dt, elevator, talon_arr)
+playback_macro = basic_auto.playback_macro
 
 
 
@@ -106,7 +115,7 @@ sp = SensorPoller((gyro, left_encoder, right_encoder, elevator_encoder))
 # Controllers
 driver_stick = Attack3Joystick(0)
 xbox_controller = XboxJoystick(1)
-ac = ArcadeDriveController(dt, driver_stick)
+ac = ArcadeDriveController(dt, driver_stick, record_macro, playback_macro)
 hid_sp = SensorPoller((driver_stick, xbox_controller))  # human interface devices
 
 if recording_enabled:

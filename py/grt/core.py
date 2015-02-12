@@ -194,13 +194,15 @@ class GRTMacro(object):
         self.timeout = timeout
         self.poll_time = poll_time
         self.daemon = daemon
+        self.no_initialize = False
         self._disabled_flag = threading.Event()
 
-    def run_threaded(self):
+    def run_threaded(self, no_initialize=False):
         """
         Start macro in new thread.
         See execute() for more details on macro execution.
         """
+        self.no_initialize = no_initialize
         self.process = threading.Thread(target=self.run_linear)
         self.process.start()
 
@@ -237,7 +239,8 @@ class GRTMacro(object):
             timeout_timer = None
 
         try:
-            self.macro_initialize()
+            if not self.no_initialize:
+                self.macro_initialize()
             while self.running:
                 self.macro_periodic()
                 time.sleep(self.poll_time)

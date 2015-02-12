@@ -74,6 +74,7 @@ class MechController:
                 if self.trigger_count == 0:
                     self.elevator.pickup()
                     self.trigger_count += 1
+        """
         if state_id == 'button10':
             if datum:
                 self.elevator.abort()
@@ -84,6 +85,7 @@ class MechController:
                 pass
             else:
                 self.elevator.spring()
+        """
 
     def _universal_abort_listener(self, sensor, state_id, datum):
         if state_id == 'button8':
