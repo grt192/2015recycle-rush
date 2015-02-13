@@ -165,5 +165,5 @@ class PlaybackMacro(GRTMacro):
 			#self.disengage()
 	def load(self, file_name):
             #assumes we have a python file (*.py)
-            execfile(filename)
+            execfile(file_name)
             self.instructions = instructions
