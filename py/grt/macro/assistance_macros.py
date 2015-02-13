@@ -80,6 +80,7 @@ class AlignMacro(GRTMacro):
                 self.dt.set_dt_output(0, 0)
                 print('ALIGNED')
                 #self.kill()
+                self.elevator.set_state('level0.5')
                 self.enabled = False
                 #stop the robot 
             elif self.l_switch.get():
