@@ -47,6 +47,10 @@ class ArcadeDriveController:
         if state_id == "button8":
             if datum:
                 self.playback_macro.stop_playback()
+        if state_id == "button7":
+            if datum:
+                self.playback_macro.load("instructions.py")
+                self.playback_macro.start_playback()
 
 
     def engage(self):

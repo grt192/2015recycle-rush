@@ -13,7 +13,7 @@ class FourBar:
         self.fourbar_motor = fourbar_motor
 
     def elevate(self):
-        self.fourbar_motor.set(1)
+        self.fourbar_motor.set(.7)
 
     def lower(self):
         self.fourbar_motor.set(-.5)

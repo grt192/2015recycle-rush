@@ -64,7 +64,7 @@ class MechController:
                 self.last_height = height
 
         if state_id == 'trigger':
-            if datum:
+            """if datum:
                 if self.trigger_count == 3:
                     self.elevator.release()
                     self.trigger_count = 0
@@ -74,6 +74,23 @@ class MechController:
                 if self.trigger_count == 0:
                     self.elevator.pickup()
                     self.trigger_count += 1
+            """
+            #if datum:
+            #    self.elevator.release()
+            #else:
+            #   self.elevator.abort_release()
+            pass
+        if state_id == "button3":
+            if datum:
+                self.fourbar.elevate()
+            else:
+                self.fourbar.stop()
+        if state_id == "button2":
+            if datum:
+                self.fourbar.lower()
+            else:
+                self.fourbar.stop()
+
         """
         if state_id == 'button10':
             if datum:

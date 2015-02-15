@@ -71,28 +71,41 @@ dt_l4.set(7)
 
 gyro = Gyro(1)
 
-talon_arr = [dt_right, dt_left]
-record_macro = RecordMacro(talon_arr)
+
 
 
 
 
 
 #if auto_enabled:
-left_encoder = Encoder(4, 5, distance_per_rev=(4 * math.pi), reverse=True)
-right_encoder = Encoder(6, 7, distance_per_rev=(4*math.pi))
+left_encoder = Encoder(0, 1, distance_per_rev=(4 * math.pi), reverse=True)
+right_encoder = Encoder(2, 3, distance_per_rev=(4*math.pi))
 
 dt = DriveTrain(dt_left, dt_right, left_encoder=left_encoder, right_encoder=right_encoder)
 	#self.drive_macro = DriveMacro(dt, 10, 2)
 
 #Digital inputs
-l_switch = DigitalInput(8)
-r_switch = DigitalInput(9)
+#l_switch = DigitalInput(8)
+#r_switch = DigitalInput(9)
 
 
-elevator_motor = CANTalon(6)
-elevator_encoder = Encoder(0, 1, distance_per_rev=1, cpr=1, reverse=True)
-elevator = Elevator(elevator_motor, elevator_encoder, l_switch, r_switch)
+elevator_motor = CANTalon(11)
+elevator_motor_2 = CANTalon(12)
+elevator_motor_2.changeControlMode(CANTalon.ControlMode.Follower)
+elevator_motor_2.set(11)
+
+talon_arr = [dt_right, dt_left, elevator_motor]
+record_macro = RecordMacro(talon_arr)
+
+elevator_distance_per_rev = 1.273 * math.pi
+elevator_cpr = 250
+elevator_encoder = Encoder(4, 5, distance_per_rev=elevator_distance_per_rev, cpr=elevator_cpr, reverse=True)
+top_switch = DigitalInput(13)
+bottom_limit_switch = DigitalInput(9)
+bottom_switch = DigitalInput(8)
+left_switch = DigitalInput(6)
+right_switch = DigitalInput(7)
+elevator = Elevator(elevator_motor, elevator_encoder, left_switch=left_switch, right_switch=right_switch, top_switch=top_switch, bottom_switch=bottom_switch, bottom_limit_switch=bottom_limit_switch)
 
 basic_auto = BasicAuto(dt, elevator, talon_arr)
 playback_macro = basic_auto.playback_macro
@@ -138,8 +151,8 @@ fourbar = FourBar(fourbar_motor)
 
 
 
-motor1 = CANTalon(11)
-motor2 = CANTalon(12)
+motor1 = CANTalon(14)
+motor2 = CANTalon(15)
 two_motor_pickup = TwoMotorPickup(motor1, motor2)
 
 mc = MechController(elevator, fourbar, two_motor_pickup, driver_stick, xbox_controller)
