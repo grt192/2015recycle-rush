@@ -154,6 +154,8 @@ class ElevatorMacro(GRTMacro):
         self.index_id = index_id
         self.ERROR = 0
         self.run_threaded()
+        self.counter = 0 #counter of attempted pickups
+        self.prev_pressed = False #for counter
 
     def macro_initialize(self):
         self.initial_distance = self.elevator_encoder.e.getDistance()
@@ -195,7 +197,7 @@ class ElevatorMacro(GRTMacro):
         if self.enabled:
             self.ERROR = self.setpoint - self.elevator_encoder.distance
             #If the setpoint is above the current distance.
-            print("Bottom switch: ", self.elevator.bottom_switch.get())
+            #print("Bottom switch: ", self.elevator.bottom_switch.get())
             #print("Encoder distance: ", self.elevator_encoder.distance)
             #if not (self.elevator.top_switch.get() and self.elevator.bottom_switch.get()):
              #   self.macro_stop()
@@ -233,7 +235,10 @@ class ElevatorMacro(GRTMacro):
 
             else:
                 print("Stopping")
+                #self.counter += 1
+                #print(self.counter)
                 self.macro_stop()
+
         else:
             if not self.elevator.bottom_switch.get() and self.elevator.bottom_limit_switch.get():
                 print("Slowly descending")
@@ -242,6 +247,16 @@ class ElevatorMacro(GRTMacro):
             if not self.elevator.bottom_limit_switch.get():
                 print("Stopping")
                 self.macro_stop()
+
+            
+        if not self.elevator.bottom_limit_switch.get() and not self.prev_pressed:
+            self.counter += 1
+            self.prev_pressed = True
+            print(self.counter)
+        elif self.elevator.bottom_limit_switch.get():
+            self.prev_pressed = False
+        
+
 
             
             #if not self.elevator.bottom_limit_switch.get():
