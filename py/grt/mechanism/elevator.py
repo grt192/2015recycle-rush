@@ -37,8 +37,18 @@ class Elevator:
         #self.temp_talon.set(0)
 
     def elevate_speed(self, power):
-        self.elevator_motor.set(power)
+        self.elevator_motor.set(-power)
         #self.temp_talon.set(power)
+
+    def elevate_speed_safe(self, power):
+        if not self.bottom_switch.get() and self.bottom_limit_switch.get():
+            print("Slowly descending")
+            self.elevate_speed(.1 * power)
+        if not self.bottom_limit_switch.get():
+            print("Stopping")
+            self.macro_stop()
+        else:
+            self.elevate_speed(power)
 
     def engage_winch(self):
         self.winch_servo.setAngle(45)

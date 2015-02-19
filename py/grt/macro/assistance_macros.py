@@ -11,6 +11,7 @@ class ReleaseMacro(GRTMacro):
         super().__init__(timeout)
         self.left_switch = elevator.left_switch
         self.right_switch = elevator.right_switch
+        self.elevator = elevator
         self.elevator_motor = elevator.elevator_motor #change how the motor is being called!
         #ie. use the elevator's functions
         elevator.running_macros.append(self)
@@ -20,15 +21,22 @@ class ReleaseMacro(GRTMacro):
     #while any switches are pressed, lower elevator
     def macro_periodic(self):
         if self.enabled:
-            if not self.left_switch.get() and not self.right_switch.get():
-                self.elevator.set_state['level0']
+            if "release" not in self.elevator.lift_macro.current_state:
+                self.elevator.lift_macro.current_state += "_release"
             else:
-                self.elevator.lift_macro.setpoint = self.elevator.lift_macro.elevator_encoder.distance
-                self.elevator.stop()
+                pass
+                #Possibly add in something to undo the release here.
+            self.elevator.lift_macro.setpoint = self.elevator.lift_macro.STATE_DICT[self.elevator.lift_macro.current_state]
+            self.enabled = False
+            #if not self.left_switch.get() and not self.right_switch.get():
+            #    self.elevator.set_state['level0']
+            #else:
+            #    self.elevator.lift_macro.setpoint = self.elevator.lift_macro.elevator_encoder.distance
+            #    self.elevator.stop()
                 #self.dt.set_dt_output(-.5, -.5)
                 #time.sleep(.5)
                 #self.dt.set_dt_output(0, 0)
-                self.enabled = False
+            #    self.enabled = False
                 #self.kill()
     def macro_stop(self):
         self.elevator.stop()
@@ -128,7 +136,7 @@ class ElevatorMacro(GRTMacro):
     distance = None
     previously_on_target = False
 
-    def __init__(self, elevator, distance=0, timeout=None):
+    def __init__(self, elevator, distance=0, timeout=None, index_id=100):
         """
         Pass drivetrain, distance to travel (ft), and timeout (secs)
         """
@@ -136,13 +144,15 @@ class ElevatorMacro(GRTMacro):
         self.elevator= elevator
         self.distance = distance
         self.elevator_encoder = elevator.elevator_encoder
-        self.STATE_DICT = {'level0' : 0, 'level0.5' : 7, 'level1' : 20, 'level2' : 35, 'level3' : 50, 'level4' : 44}
+        self.STATE_DICT = {'level0_release' : 0, 'level0' : 0, 'level0.5_release' : 0, 'level0.5' : 7, 'level1_release' : 13, 'level1' : 20, 'level2_release' : 27, 'level2' : 35, 'level3_release' : 42, 'level3' : 50}
         self.setpoint = distance
         self.zero = self.elevator_encoder.e.getDistance()
         self.current_state = 'level0'
         self.enabled = True
         self.at_top = False
         self.at_bottom = False
+        self.index_id = index_id
+        self.ERROR = 0
         self.run_threaded()
 
     def macro_initialize(self):
@@ -224,6 +234,14 @@ class ElevatorMacro(GRTMacro):
             else:
                 print("Stopping")
                 self.macro_stop()
+        else:
+            if not self.elevator.bottom_switch.get() and self.elevator.bottom_limit_switch.get():
+                print("Slowly descending")
+                if self.elevator.elevator_motor.get() < 0:
+                    self.elevator.elevate_speed(self.elevator.elevator_motor.get() * .1)
+            if not self.elevator.bottom_limit_switch.get():
+                print("Stopping")
+                self.macro_stop()
 
             
             #if not self.elevator.bottom_limit_switch.get():
@@ -243,6 +261,44 @@ class ElevatorMacro(GRTMacro):
 
     def macro_stop(self):
         self.elevator.stop()
+
+    def getDeviceID(self):
+        #Yes, this is pretending to be a Talon.
+        return self.index_id
+    def get(self):
+        """if self.index_id == 0:
+            return self.current_state
+        elif self.index_id == 1:
+            return self.elevator_encoder.distance
+        elif self.index_id == 2:
+            return self.setpoint
+        elif self.index_id == 3:
+            return self.ERROR
+        else:
+            print("This index does not record anything.")
+            return "No record"
+        """
+        """
+        Call the following code (or something similar) on this tuple to re-parse it
+        and return the value you want:
+
+        a = [(1,2,3),(4,5,6),(7,8,9)]
+        b = []
+        for i in a:
+            b.append(i[0])  #Replace 0 with the index you want.
+        print(b)
+
+        Yes, this means that the instructions will be an ordered dictionary of lists of tuples. :)
+        """
+
+        #return self.current_state, self.elevator_encoder.distance, self.setpoint, self.ERROR
+        return self.setpoint
+
+    def set(self, state):
+        #wanted_instructions = []
+        #wanted_instructions.append()
+        self.setpoint = state #state[2]
+        #print(state)
 
     def lift_to(self, state):
         #Add in self.enabled logic here!

@@ -57,6 +57,7 @@ class RecordMacro(GRTMacro):
         to the instructions dictionary. Sample rate is currently hard-coded.
         """
         #while self.running:
+        #print("Operating")
         if self.enabled:
             i = 0
             tinit = time.time()
@@ -100,7 +101,7 @@ class PlaybackMacro(GRTMacro):
         for key in self.instructions:
             i = int(key.split(',')[0])
             print(i)
-            if "Talon" in key:
+            if "Talon" in key or "Macro" in key:
                 self.talon_arr.append(self.instructions[key])
                 #print(self.instructions[key])
                 print(self.talon_arr)
@@ -158,7 +159,9 @@ class PlaybackMacro(GRTMacro):
         tinit = time.time()
         try:
             print(str(range(len(self.talon_arr[0]))))
-            for j in range(len(self.talon_arr)):
+            for j in range(len(self.talon_arr)):   ###IMPORTANT NOTE!!! 
+            #THIS WAS CHANGED FROM len(self.talon_arr) to len(self.talon_arr_obj)
+            #IT SHOULD STILL WORK, but be sure to change it back at some point.
                 self.talon_arr_obj[j].set(self.talon_arr[j][self.i])
                 print(self.talon_arr[j][self.i])
                 print("J: " + str(j))

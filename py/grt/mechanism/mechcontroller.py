@@ -10,21 +10,31 @@ class MechController:
         self.trigger_count = 0
         self.button9_count = 0
         self.last_height = 0
+        self.manual_control = False
 
     def _xbox_controller_listener(self, sensor, state_id, datum):
-        if state_id == 'r_y_axis':
-            if datum:
-                if abs(datum) > .05:
-                    self.elevator.elevate_speed(datum)
-                else:
-                    self.elevator.stop()
+        if self.manual_control:
+            if state_id == 'r_y_axis':
+                if datum:
+                    if abs(datum) > .05:
+                        self.elevator.elevate_speed_safe(datum)
+                    else:
+                        self.elevator.stop()
         if state_id == 'l_y_axis':
             if datum:
                 if abs(datum) > .05:
                     self.fourbar.elevate_speed(datum)
                 else:
                     self.fourbar.stop()
-                    
+        if state_id == "back_button": #Makes it hard to accidentally press this.
+            if datum:
+                self.elevator.lift_macro.enabled = False
+                self.manual_control = True
+        if state_id == "start_button":
+            if datum:
+                self.elevator.lift_macro.enabled = True
+                self.manual_control = False
+        """                    
         if state_id == "l_shoulder":
             if datum:
                 self.two_motor_pickup.operate(.5)
@@ -37,6 +47,7 @@ class MechController:
                 self.two_motor_pickup.operate(.5)
             else:
                 self.two_motor_pickup.stop()
+        """
 
 
 
@@ -45,25 +56,23 @@ class MechController:
             height = datum
             if abs(height - self.last_height) > .3:
                  #self.driver_joystick.j.getZ()
-                if height >= -1 and height < -2/3:
+                if height >= -1 and height < -3/5:
                     self.elevator.set_state('level0')
                     print("Level 0!")
-                elif height > -2/3 and height < -1/3:
+                elif height > -3/5 and height < -1/5:
                     print("Level 0.5!")
                     self.elevator.set_state('level0.5')
-                elif height > -1/3 and height < 0:
+                elif height > -1/5 and height < 1/5:
                     self.elevator.set_state('level1')
-                elif height > 0 and height < 1/3:
+                elif height > 1/5 and height < 3/5:
                     self.elevator.set_state('level2')
-                elif height > 1/3 and height < 2/3:
+                elif height > 3/5 and height <= 1:
                     self.elevator.set_state('level3')
-                elif height > 2/3 and height <= 1:
-                    self.elevator.set_state('level4')
                 else:
                     print('Unknown range set!')
                 self.last_height = height
 
-        if state_id == 'trigger':
+        if state_id == 'button2':
             """if datum:
                 if self.trigger_count == 3:
                     self.elevator.release()
@@ -75,12 +84,16 @@ class MechController:
                     self.elevator.pickup()
                     self.trigger_count += 1
             """
-            #if datum:
-            #    self.elevator.release()
-            #else:
-            #   self.elevator.abort_release()
-            pass
-        if state_id == "button3":
+            if datum:
+                self.elevator.release()
+            else:
+               self.elevator.abort_release()
+        if state_id == "trigger":
+            if datum:
+                self.elevator.pickup()
+            else:
+                self.elevator.align_macro.enabled = False
+        """if state_id == "button3":
             if datum:
                 self.fourbar.elevate()
             else:
@@ -90,6 +103,7 @@ class MechController:
                 self.fourbar.lower()
             else:
                 self.fourbar.stop()
+        """
 
         """
         if state_id == 'button10':

@@ -36,9 +36,11 @@ class ArcadeDriveController:
                 self.dt.downshift()
         if state_id == "button11":
             if datum:
+                print("Recording started")
                 self.record_macro.start_record()
         if state_id == "button10":
             if datum:
+                print("Recording stopped")
                 self.instructions = self.record_macro.stop_record()
                 #self.record_macro.instructions = self.instructions
         if state_id == "button9":

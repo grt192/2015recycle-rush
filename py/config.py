@@ -94,18 +94,22 @@ elevator_motor_2 = CANTalon(12)
 elevator_motor_2.changeControlMode(CANTalon.ControlMode.Follower)
 elevator_motor_2.set(11)
 
-talon_arr = [dt_right, dt_left, elevator_motor]
-record_macro = RecordMacro(talon_arr)
+
 
 elevator_distance_per_rev = 1.273 * math.pi
-elevator_cpr = 250
-elevator_encoder = Encoder(4, 5, distance_per_rev=elevator_distance_per_rev, cpr=elevator_cpr, reverse=True)
+#Changed to 120 for omega 2!
+elevator_cpr = 120
+elevator_encoder = Encoder(4, 5, distance_per_rev=elevator_distance_per_rev, cpr=elevator_cpr, reverse=False)
 top_switch = DigitalInput(13)
 bottom_limit_switch = DigitalInput(9)
 bottom_switch = DigitalInput(8)
 left_switch = DigitalInput(6)
 right_switch = DigitalInput(7)
-elevator = Elevator(elevator_motor, elevator_encoder, left_switch=left_switch, right_switch=right_switch, top_switch=top_switch, bottom_switch=bottom_switch, bottom_limit_switch=bottom_limit_switch)
+elevator = Elevator(elevator_motor, elevator_encoder, left_switch=left_switch, right_switch=right_switch, dt=dt, top_switch=top_switch, bottom_switch=bottom_switch, bottom_limit_switch=bottom_limit_switch)
+
+talon_arr = [dt_right, dt_left, elevator.lift_macro]
+#talon_arr_macro = [dt_right, dt_left, elevator.lift_macro, elevator_motor]
+record_macro = RecordMacro(talon_arr)
 
 basic_auto = BasicAuto(dt, elevator, talon_arr)
 playback_macro = basic_auto.playback_macro
