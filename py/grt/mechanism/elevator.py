@@ -11,11 +11,11 @@ class Elevator:
         self.top_switch = top_switch
         self.bottom_switch = bottom_switch
         self.running_macros = []
+        self.bottom_limit_switch = bottom_limit_switch
         #The elevator passes itself to the macros so that they can take over its functions.
         self.release_macro = ReleaseMacro(self, dt)
         self.align_macro = AlignMacro(self, dt)
         self.lift_macro = ElevatorMacro(self)
-        self.bottom_limit_switch = bottom_limit_switch
 
         #self.temp_talon = wpilib.Talon(9)
 
@@ -49,6 +49,28 @@ class Elevator:
         if not current_index == 0:
             self.lift_macro.current_state = list(self.lift_macro.STATE_DICT.keys())[current_index - 1]
             self.lift_macro.setpoint = list(self.lift_macro.STATE_DICT.values())[current_index - 1]
+    def lower_full_step(self):
+        if "release" in self.lift_macro.current_state:
+            self.step_logic(-3)
+        else:
+            self.step_logic(-2)
+    def raise_full_step(self):
+        if "release" in self.lift_macro.current_state:
+            self.step_logic(1)
+        else:
+            self.step_logic(2)
+
+    def step_logic(self, steps):
+        current_index = list(self.lift_macro.STATE_DICT.keys()).index(self.lift_macro.current_state)
+        adjusted_index = current_index + steps
+        print(current_index)
+        if adjusted_index >= 0: #Prevents wrap-around
+            try:
+                self.lift_macro.current_state = list(self.lift_macro.STATE_DICT.keys())[adjusted_index]
+                self.lift_macro.setpoint = list(self.lift_macro.STATE_DICT.values())[adjusted_index]
+            except IndexError:
+                pass
+
 
     def elevate_speed_safe(self, power):
         if not self.bottom_switch.get() and self.bottom_limit_switch.get():

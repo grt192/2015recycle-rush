@@ -165,9 +165,10 @@ class ElevatorMacro(GRTMacro):
         self.at_bottom = False
         self.index_id = index_id
         self.ERROR = 0
-        self.run_threaded()
         self.counter = 0 #counter of attempted pickups
         self.prev_pressed = False #for counter
+        self.run_threaded()
+        
 
     def macro_initialize(self):
         self.initial_distance = self.elevator_encoder.e.getDistance()
@@ -292,6 +293,28 @@ class ElevatorMacro(GRTMacro):
 
     def macro_stop(self):
         self.elevator.stop()
+
+    def re_zero(self):
+        temp_thread = threading.Thread(target=self.run_re_zero)
+        temp_thread.start()
+
+    def run_re_zero(self):
+        tinit = time.time()
+        tdif = time.time() - tinit
+        while self.elevator.bottom_limit_switch.get() and tdif < 5:
+            self.enabled = False
+            self.elevator.elevate_speed_safe(-.2)
+            tdif = time.time() - tinit
+            time.sleep(.2)
+        self.enabled = True
+        self.elevator_encoder.reset()
+        self.setpoint = 0
+        self.current_state = "level0"
+        self.lift_to("level0")
+        if self.elevator.bottom_limit_switch.get():
+            print("Re-zeroing has timed out! The encoder has been reset anyway, but the zero may not be correct.")
+        else:
+            print("Re-zeroing successfully completed.")
 
     def getDeviceID(self):
         #Yes, this is pretending to be a Talon.

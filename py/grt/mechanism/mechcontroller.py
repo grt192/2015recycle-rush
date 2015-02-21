@@ -80,10 +80,12 @@ class MechController:
                 #if self.trigger_count == 0:
                 #    self.elevator.set_state('level3')
                 #    self.trigger_count += 1
-                if self.elevator.lift_macro.current_state is "level0":
-                    self.elevator.set_state('level3')
+                if self.elevator.lift_macro.current_state == "level0" or self.elevator.lift_macro.current_state == "level0_release" or self.elevator.lift_macro.current_state == "level0.5_release":
+                    self.elevator.set_state('level1')
+                    print("Springing")
                 else:
                     self.elevator.lower_half_step()
+                print(self.elevator.lift_macro.current_state)
             
             #if datum:
             #    self.elevator.set_state('level3')
@@ -94,9 +96,19 @@ class MechController:
                 self.elevator.pickup()
             else:
                 self.elevator.align_macro.enabled = False
-        if state_id == "button6":
+        if state_id == "button60":
             if datum:
                 self.elevator.toggle_step()
+
+        if state_id == "button6":
+            if datum:
+                self.elevator.raise_full_step()
+                print(self.elevator.lift_macro.current_state)
+
+        if state_id == "button7":
+            if datum:
+                self.elevator.lower_full_step()
+                print(self.elevator.lift_macro.current_state)
 
 
         if state_id == "button3":
@@ -109,6 +121,11 @@ class MechController:
                 self.fourbar.lower()
             else:
                 self.fourbar.stop()
+
+        if state_id == "button4":
+            if datum:
+                print("Re-zeroing!")
+                self.elevator.lift_macro.re_zero()
         
 
         """

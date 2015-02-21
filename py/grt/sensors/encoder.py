@@ -35,3 +35,6 @@ class Encoder(Sensor):
         self.rate = self.e.getRate()
         self.stopped = self.e.getStopped()
         self.direction = self.e.getDirection()
+
+    def reset(self):
+        self.e.reset()
