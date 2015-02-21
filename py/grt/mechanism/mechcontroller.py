@@ -72,28 +72,34 @@ class MechController:
                     print('Unknown range set!')
                 self.last_height = height
 
-        if state_id == 'button2':
-            """if datum:
-                if self.trigger_count == 3:
-                    self.elevator.release()
-                    self.trigger_count = 0
-                if self.trigger_count == 2:
-                    self.elevator.set_state('level0.5')
-                    self.trigger_count += 1
-                if self.trigger_count == 0:
-                    self.elevator.pickup()
-                    self.trigger_count += 1
-            """
+        if state_id == 'trigger':
             if datum:
-                self.elevator.release()
-            else:
-               self.elevator.abort_release()
-        if state_id == "trigger":
+                #if self.trigger_count == 1:
+                #    self.trigger_count = 0
+                #    self.elevator.release()
+                #if self.trigger_count == 0:
+                #    self.elevator.set_state('level3')
+                #    self.trigger_count += 1
+                if self.elevator.lift_macro.current_state is "level0":
+                    self.elevator.set_state('level3')
+                else:
+                    self.elevator.lower_half_step()
+            
+            #if datum:
+            #    self.elevator.set_state('level3')
+            #else:
+            #   self.elevator.set_state('level0')
+        if state_id == "button57":
             if datum:
                 self.elevator.pickup()
             else:
                 self.elevator.align_macro.enabled = False
-        """if state_id == "button3":
+        if state_id == "button6":
+            if datum:
+                self.elevator.toggle_step()
+
+
+        if state_id == "button3":
             if datum:
                 self.fourbar.elevate()
             else:
@@ -103,7 +109,7 @@ class MechController:
                 self.fourbar.lower()
             else:
                 self.fourbar.stop()
-        """
+        
 
         """
         if state_id == 'button10':

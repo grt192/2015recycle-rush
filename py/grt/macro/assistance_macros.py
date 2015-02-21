@@ -124,7 +124,7 @@ class AlignMacro(GRTMacro):
 
 
 #constants = Constants()
-
+from collections import OrderedDict
 
 class ElevatorMacro(GRTMacro):
     """
@@ -144,7 +144,19 @@ class ElevatorMacro(GRTMacro):
         self.elevator= elevator
         self.distance = distance
         self.elevator_encoder = elevator.elevator_encoder
-        self.STATE_DICT = {'level0_release' : 0, 'level0' : 0, 'level0.5_release' : 0, 'level0.5' : 7, 'level1_release' : 13, 'level1' : 20, 'level2_release' : 27, 'level2' : 35, 'level3_release' : 42, 'level3' : 50}
+        #self.STATE_DICT = {'level0_release' : 0, 'level0' : 0, 'level0.5_release' : 0, 'level0.5' : 7, 'level1_release' : 12, 'level1' : 17, 'level2_release' : 27, 'level2' : 33, 'level3_release' : 42, 'level3' : 50}
+        self.STATE_DICT = OrderedDict()
+        self.STATE_DICT['level0_release'] = 0
+        self.STATE_DICT['level0'] = 0
+        self.STATE_DICT['level0.5_release'] = 0
+        self.STATE_DICT['level0.5'] = 7
+        self.STATE_DICT['level1_release'] = 13
+        self.STATE_DICT['level1'] = 22
+        self.STATE_DICT['level2_release'] = 25
+        self.STATE_DICT['level2'] = 35
+        self.STATE_DICT['level3_release'] = 36
+        self.STATE_DICT['level3'] = 48
+
         self.setpoint = distance
         self.zero = self.elevator_encoder.e.getDistance()
         self.current_state = 'level0'
@@ -207,7 +219,9 @@ class ElevatorMacro(GRTMacro):
                 #    self.elevator.elevate_speed(.6)
                 #elif self.elevator_encoder.distance < self.setpoint:
                 #    self.elevator.elevate_speed(.3)
-                if self.ERROR > 2 and abs(self.ERROR) > 2:
+                if self.ERROR > 3:
+                    self.elevator.elevate_speed(.8)
+                if self.ERROR > 2 and abs(self.ERROR) <= 3:
                     self.elevator.elevate_speed(.4)
                 elif self.ERROR <= 2 and self.ERROR > .5:
                     self.elevator.elevate_speed(.1)
@@ -221,7 +235,9 @@ class ElevatorMacro(GRTMacro):
                 #    self.elevator.elevate_speed(.6)
                 #elif self.elevator_encoder.distance < self.setpoint:
                 #    self.elevator.elevate_speed(.3)
-                if abs(self.ERROR) > 2 and abs(self.ERROR) > 2:
+                if abs(self.ERROR) > 3:
+                    self.elevator.elevate_speed(-.8)
+                if abs(self.ERROR) > 2 and abs(self.ERROR) <= 3:
                     self.elevator.elevate_speed(-.4)
                 elif abs(self.ERROR) <= 2 and abs(self.ERROR) > .5:
                     self.elevator.elevate_speed(-.1)

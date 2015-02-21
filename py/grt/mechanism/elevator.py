@@ -24,6 +24,9 @@ class Elevator:
             self.release_winch()
         self.elevator_motor.set(1)
 
+    def toggle_step(self):
+        pass
+
     def lower(self):
         if self.winch_servo:
             self.release_winch()
@@ -39,6 +42,13 @@ class Elevator:
     def elevate_speed(self, power):
         self.elevator_motor.set(-power)
         #self.temp_talon.set(power)
+
+    def lower_half_step(self):
+        current_index = list(self.lift_macro.STATE_DICT.keys()).index(self.lift_macro.current_state)
+        print(current_index)
+        if not current_index == 0:
+            self.lift_macro.current_state = list(self.lift_macro.STATE_DICT.keys())[current_index - 1]
+            self.lift_macro.setpoint = list(self.lift_macro.STATE_DICT.values())[current_index - 1]
 
     def elevate_speed_safe(self, power):
         if not self.bottom_switch.get() and self.bottom_limit_switch.get():
