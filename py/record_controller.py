@@ -48,7 +48,7 @@ class RecordMacro(GRTMacro):
     def stop_record(self):
         self.enabled = False
         print(self.instructions)
-        self.save("instructions.py")
+        self.save("/home/lvuser/py/instructions.py")
         return self.instructions
 
     def macro_periodic(self):

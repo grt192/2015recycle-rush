@@ -84,16 +84,16 @@ class AlignMacro(GRTMacro):
             #print('Left limit switch state: %f, Right limit switch state: %f'%(self.l_switch.get(), self.r_switch.get())
        '''
         if self.enabled:
-            if self.l_switch.get() and self.r_switch.get():
+            if not self.l_switch.get() and not self.r_switch.get():
                 self.dt.set_dt_output(ramming_power, ramming_power)
-            elif not(self.l_switch.get() or self.r_switch.get()):
+            elif self.l_switch.get() and self.r_switch.get():
                 #if both buttons are pressed (both are False)
                 self.dt.set_dt_output(0, 0)
                 print('ALIGNED')
                 #self.kill()
                 self.enabled = False
                 #stop the robot 
-            elif self.l_switch.get():
+            elif not self.l_switch.get():
                 #the right switch is pressed (because the left is not)
                 #shut off the right side to turn into position
                 self.dt.set_dt_output(turning_power, weak_turning)
@@ -156,6 +156,8 @@ class ElevatorMacro(GRTMacro):
         self.STATE_DICT['level2'] = 35
         self.STATE_DICT['level3_release'] = 36
         self.STATE_DICT['level3'] = 48
+        self.STATE_DICT['level4_release'] = 49.5
+        self.STATE_DICT['level4'] = 54.5
 
         self.setpoint = distance
         self.zero = self.elevator_encoder.e.getDistance()
@@ -207,6 +209,7 @@ class ElevatorMacro(GRTMacro):
         #Move initial distance logic to a special if statement
         # that gets called only once when the macro is first enabled.
         # self.initialize() calls will be useless for these macros.
+        print(self.elevator_encoder.distance)
         if self.enabled:
             self.ERROR = self.setpoint - self.elevator_encoder.distance
             #If the setpoint is above the current distance.
@@ -295,6 +298,7 @@ class ElevatorMacro(GRTMacro):
         self.elevator.stop()
 
     def re_zero(self):
+        #We want to be able to do other things on the robot while the re-zeroing is occurring.
         temp_thread = threading.Thread(target=self.run_re_zero)
         temp_thread.start()
 
@@ -302,7 +306,7 @@ class ElevatorMacro(GRTMacro):
         tinit = time.time()
         tdif = time.time() - tinit
         while self.elevator.bottom_limit_switch.get() and tdif < 5:
-            self.enabled = False
+            self.enabled = False #Prevents the macro from fighting the re-zero.
             self.elevator.elevate_speed_safe(-.2)
             tdif = time.time() - tinit
             time.sleep(.2)

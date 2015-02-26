@@ -51,7 +51,7 @@ class ArcadeDriveController:
                 self.playback_macro.stop_playback()
         if state_id == "button70":
             if datum:
-                self.playback_macro.load("instructions.py")
+                self.playback_macro.load("/home/lvuser/py/instructions.py")
                 self.playback_macro.start_playback()
 
 

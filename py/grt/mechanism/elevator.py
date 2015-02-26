@@ -78,7 +78,7 @@ class Elevator:
             self.elevate_speed(.1 * power)
         if not self.bottom_limit_switch.get():
             print("Stopping")
-            self.macro_stop()
+            self.lift_macro.macro_stop()
         else:
             self.elevate_speed(power)
 

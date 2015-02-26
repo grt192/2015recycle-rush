@@ -126,6 +126,12 @@ class MechController:
             if datum:
                 print("Re-zeroing!")
                 self.elevator.lift_macro.re_zero()
+        if state_id == "button5":
+            if datum:
+                print("Aligning")
+                self.elevator.pickup()
+            else:
+                self.elevator.align_macro.enabled = False
         
 
         """
