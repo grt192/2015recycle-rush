@@ -209,24 +209,24 @@ class ElevatorMacro(GRTMacro):
         #Move initial distance logic to a special if statement
         # that gets called only once when the macro is first enabled.
         # self.initialize() calls will be useless for these macros.
-        print(self.elevator_encoder.distance)
+        #print(self.elevator_encoder.distance)
         if self.enabled:
             self.ERROR = self.setpoint - self.elevator_encoder.distance
             #If the setpoint is above the current distance.
-            #print("Bottom switch: ", self.elevator.bottom_switch.get())
-            #print("Encoder distance: ", self.elevator_encoder.distance)
+            print("Bottom switch: ", self.elevator.bottom_switch.get())
+            print("Bottom limit switch: ", self.elevator.bottom_limit_switch.get())
+            print("Encoder distance: ", self.elevator_encoder.distance)
             #if not (self.elevator.top_switch.get() and self.elevator.bottom_switch.get()):
              #   self.macro_stop()
             if self.ERROR >= 0: # and self.elevator.top_switch.get():
                 #print("Started")
                 #if self.ERROR < self.setpoint * .8:
-                #    self.elevator.elevate_speed(.6)
-                #elif self.elevator_encoder.distance < self.setpoint:
+                #    self.elevator.elevate_speed(.6zse                #elif self.elevator_encoder.distance < self.setpoint:
                 #    self.elevator.elevate_speed(.3)
                 if self.ERROR > 3:
                     self.elevator.elevate_speed(.8)
                 if self.ERROR > 2 and abs(self.ERROR) <= 3:
-                    self.elevator.elevate_speed(.4)
+                    self.elevator.elevate_speed(.2)
                 elif self.ERROR <= 2 and self.ERROR > .5:
                     self.elevator.elevate_speed(.1)
                 if self.ERROR <= .5:
@@ -242,7 +242,7 @@ class ElevatorMacro(GRTMacro):
                 if abs(self.ERROR) > 3:
                     self.elevator.elevate_speed(-.8)
                 if abs(self.ERROR) > 2 and abs(self.ERROR) <= 3:
-                    self.elevator.elevate_speed(-.4)
+                    self.elevator.elevate_speed(-.2)
                 elif abs(self.ERROR) <= 2 and abs(self.ERROR) > .5:
                     self.elevator.elevate_speed(-.1)
                 if abs(self.ERROR) <= .5:
