@@ -107,7 +107,10 @@ left_switch = DigitalInput(6)
 right_switch = DigitalInput(7)
 elevator = Elevator(elevator_motor, elevator_encoder, left_switch=left_switch, right_switch=right_switch, dt=dt, top_switch=top_switch, bottom_switch=bottom_switch, bottom_limit_switch=bottom_limit_switch)
 
-talon_arr = [dt_right, dt_left, elevator.lift_macro]
+fourbar_motor = CANTalon(5)
+fourbar = FourBar(fourbar_motor)
+
+talon_arr = [dt_right, dt_left, elevator.lift_macro, fourbar_motor]
 #talon_arr_macro = [dt_right, dt_left, elevator.lift_macro, elevator_motor]
 record_macro = RecordMacro(talon_arr)
 
@@ -150,8 +153,7 @@ else:
 
 #Mechs
 
-fourbar_motor = CANTalon(5)
-fourbar = FourBar(fourbar_motor)
+
 
 
 

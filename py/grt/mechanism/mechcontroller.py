@@ -22,7 +22,7 @@ class MechController:
                         self.elevator.stop()
         if state_id == 'l_y_axis':
             if datum:
-                if abs(datum) > .05:
+                if abs(datum) > .1:
                     self.fourbar.elevate_speed(datum)
                 else:
                     self.fourbar.stop()

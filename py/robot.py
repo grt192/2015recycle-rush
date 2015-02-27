@@ -41,7 +41,7 @@ class MyRobot(wpilib.SampleRobot):
         def autonomous(self):
             global auto
             print("Autonomous started")
-            #self.basic_auto.run_autonomous()
+            self.basic_auto.run_autonomous()
             while self.isAutonomous() and self.isEnabled():
                 tinit = time.time()
                 self.sp.poll()
