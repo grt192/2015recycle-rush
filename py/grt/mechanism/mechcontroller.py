@@ -11,6 +11,7 @@ class MechController:
         self.button9_count = 0
         self.last_height = 0
         self.manual_control = False
+        self.step_offset = False
 
     def _xbox_controller_listener(self, sensor, state_id, datum):
         if self.manual_control:
@@ -34,6 +35,38 @@ class MechController:
             if datum:
                 self.elevator.lift_macro.enabled = True
                 self.manual_control = False
+
+        if state_id == "a_button_2":
+            if datum:
+                if self.step_offset:
+                    self.step_offset = False
+                    self.elevator.lift_macro.STATE_DICT['level0_release'] = 0
+                    self.elevator.lift_macro.STATE_DICT['level0'] = 0
+                    self.elevator.lift_macro.STATE_DICT['level0.5_release'] = 0
+                    self.elevator.lift_macro.STATE_DICT['level0.5'] = 7
+                    self.elevator.lift_macro.STATE_DICT['level1_release'] = 13
+                    self.elevator.lift_macro.STATE_DICT['level1'] = 22
+                    self.elevator.lift_macro.STATE_DICT['level2_release'] = 25
+                    self.elevator.lift_macro.STATE_DICT['level2'] = 35
+                    self.elevator.lift_macro.STATE_DICT['level3_release'] = 36
+                    self.elevator.lift_macro.STATE_DICT['level3'] = 48
+                    self.elevator.lift_macro.STATE_DICT['level4_release'] = 49.5
+                    self.elevator.lift_macro.STATE_DICT['level4'] = 54.5
+                else:
+                    self.step_offset = True
+                    self.elevator.lift_macro.STATE_DICT['level0_release'] = 0
+                    self.elevator.lift_macro.STATE_DICT['level0'] = 0
+                    self.elevator.lift_macro.STATE_DICT['level0.5_release'] = 0
+                    self.elevator.lift_macro.STATE_DICT['level0.5'] = 7
+                    self.elevator.lift_macro.STATE_DICT['level1_release'] = 13
+                    self.elevator.lift_macro.STATE_DICT['level1'] = 22
+                    self.elevator.lift_macro.STATE_DICT['level2_release'] = 25
+                    self.elevator.lift_macro.STATE_DICT['level2'] = 35
+                    self.elevator.lift_macro.STATE_DICT['level3_release'] = 36
+                    self.elevator.lift_macro.STATE_DICT['level3'] = 48
+                    self.elevator.lift_macro.STATE_DICT['level4_release'] = 49.5
+                    self.elevator.lift_macro.STATE_DICT['level4'] = 54.5
+
         """                    
         if state_id == "l_shoulder":
             if datum:
@@ -52,7 +85,7 @@ class MechController:
 
 
     def _driver_joystick_listener(self, sensor, state_id, datum):
-        if state_id == "z_axis":
+        if state_id == "z_axis_2":
             height = datum
             if abs(height - self.last_height) > .3:
                  #self.driver_joystick.j.getZ()

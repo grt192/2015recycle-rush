@@ -24,6 +24,7 @@ from grt.mechanism.elevator import Elevator
 from grt.mechanism.mechcontroller import MechController
 #from grt.macro.align_macro import AlignMacro
 from grt.autonomous.basic_auto import BasicAuto
+from grt.autonomous.one_bin_stealer_auto import OneBinSteal
 from teleop_controller import TeleopController
 from record_controller import RecordMacro, PlaybackMacro
 from collections import OrderedDict
@@ -110,11 +111,13 @@ elevator = Elevator(elevator_motor, elevator_encoder, left_switch=left_switch, r
 fourbar_motor = CANTalon(5)
 fourbar = FourBar(fourbar_motor)
 
+talon_arr_basic = [dt_right, dt_left, elevator.lift_macro]
 talon_arr = [dt_right, dt_left, elevator.lift_macro, fourbar_motor]
 #talon_arr_macro = [dt_right, dt_left, elevator.lift_macro, elevator_motor]
 record_macro = RecordMacro(talon_arr)
 
-basic_auto = BasicAuto(dt, elevator, talon_arr)
+basic_auto = BasicAuto(dt, elevator, talon_arr_basic)
+one_bin_steal = OneBinSteal(talon_arr)
 playback_macro = basic_auto.playback_macro
 
 
