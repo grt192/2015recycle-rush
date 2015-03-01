@@ -251,7 +251,7 @@ class ElevatorMacro(GRTMacro):
                     self.macro_stop()
             elif not self.elevator.bottom_switch.get() and self.elevator.bottom_limit_switch.get():
                 print("Slowly descending")
-                self.elevator.elevate_speed(-.1)
+                self.elevator.elevate_speed(-.2)
 
             else:
                 print("Stopping")
@@ -259,14 +259,15 @@ class ElevatorMacro(GRTMacro):
                 #print(self.counter)
                 self.macro_stop()
 
-        else:
-            if not self.elevator.bottom_switch.get() and self.elevator.bottom_limit_switch.get():
+        """else:
+            if not self.elevator.bottom_switch.get() and self.elevator.bottom_limit_switch.get() and self.elevator.elevator_motor.get() < 0:
                 print("Slowly descending")
-                if self.elevator.elevator_motor.get() < 0:
-                    self.elevator.elevate_speed(self.elevator.elevator_motor.get() * .1)
+                #if self.elevator.elevator_motor.get() < 0:
+                self.elevator.elevate_speed(-.1)
             if not self.elevator.bottom_limit_switch.get():
-                print("Stopping")
-                self.macro_stop()
+                if self.elevator.elevator_motor.get() < 0:
+                    print("Stopping")
+                    self.macro_stop()"""
 
             
         if not self.elevator.bottom_limit_switch.get() and not self.prev_pressed:

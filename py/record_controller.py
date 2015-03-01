@@ -146,7 +146,9 @@ class PlaybackMacro(GRTMacro):
         #self.running = False
         self.enabled = False
         for talon in self.talon_arr_obj:
-            talon.set(0)
+            if str(type(talon)) == "<class 'wpilib.cantalon.CANTalon'>":
+                talon.set(0)
+
         #self.revert_controller.engage()
 
     def macro_periodic(self):

@@ -44,7 +44,7 @@ class MyRobot(wpilib.SampleRobot):
         def autonomous(self):
             global auto
             print("Autonomous started")
-            if self.driver_stick.j.getZ() < .5:
+            if self.driver_stick.j.getZ() > .5:
                 self.basic_auto.run_autonomous()
             else:
                 self.one_bin_steal.run_autonomous()

@@ -73,10 +73,11 @@ class Elevator:
 
 
     def elevate_speed_safe(self, power):
-        if not self.bottom_switch.get() and self.bottom_limit_switch.get():
+        if not self.bottom_switch.get() and self.bottom_limit_switch.get() and self.elevator_motor.get() > 0:
             print("Slowly descending")
-            self.elevate_speed(.1 * power)
-        if not self.bottom_limit_switch.get():
+            #self.elevate_speed(.1 * power)
+            self.elevate_speed(-.1)
+        if not self.bottom_limit_switch.get() and self.elevator_motor.get() > 0:
             print("Stopping")
             self.lift_macro.macro_stop()
         else:
