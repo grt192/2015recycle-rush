@@ -77,7 +77,7 @@ class Elevator:
             print("Slowly descending")
             #self.elevate_speed(.1 * power)
             self.elevate_speed(-.1)
-        if not self.bottom_limit_switch.get() and self.elevator_motor.get() > 0:
+        elif not self.bottom_limit_switch.get() and self.elevator_motor.get() > 0:
             print("Stopping")
             self.lift_macro.macro_stop()
         else:

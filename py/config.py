@@ -99,7 +99,7 @@ elevator_motor_2.set(11)
 
 elevator_distance_per_rev = 1.273 * math.pi
 #Changed to 120 for omega 2!
-elevator_cpr = 250
+elevator_cpr = 120
 elevator_encoder = Encoder(4, 5, distance_per_rev=elevator_distance_per_rev, cpr=elevator_cpr, reverse=False)
 top_switch = DigitalInput(13)
 bottom_limit_switch = DigitalInput(9)
