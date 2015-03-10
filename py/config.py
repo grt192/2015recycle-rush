@@ -104,8 +104,8 @@ elevator_encoder = Encoder(4, 5, distance_per_rev=elevator_distance_per_rev, cpr
 top_switch = DigitalInput(13)
 bottom_limit_switch = DigitalInput(9)
 bottom_switch = DigitalInput(8)
-left_switch = DigitalInput(6)
-right_switch = DigitalInput(7)
+left_switch = DigitalInput(7)
+right_switch = DigitalInput(6)
 elevator = Elevator(elevator_motor, elevator_encoder, left_switch=left_switch, right_switch=right_switch, dt=dt, top_switch=top_switch, bottom_switch=bottom_switch, bottom_limit_switch=bottom_limit_switch)
 
 fourbar_motor = CANTalon(5)

@@ -114,11 +114,17 @@ class MechController:
                 #    self.elevator.set_state('level3')
                 #    self.trigger_count += 1
                 if self.elevator.lift_macro.current_state == "level0" or self.elevator.lift_macro.current_state == "level0_release" or self.elevator.lift_macro.current_state == "level0.5_release":
-                    self.elevator.set_state('level1')
+                    #self.elevator.set_state('level1')
+                    self.elevator.align_macro.enabled = True
                     print("Springing")
                 else:
+                    self.elevator.align_macro.enabled = False
+                    self.elevator.align_macro.dt.set_lf_scale_factors(1, 1)
                     self.elevator.lower_half_step()
                 print(self.elevator.lift_macro.current_state)
+            else:
+                self.elevator.align_macro.dt.set_lf_scale_factors(1, 1)
+                self.elevator.align_macro.enabled = False
             
             #if datum:
             #    self.elevator.set_state('level3')

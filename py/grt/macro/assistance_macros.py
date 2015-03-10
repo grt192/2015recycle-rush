@@ -59,6 +59,7 @@ class AlignMacro(GRTMacro):
         super().__init__(timeout)
 
         self.dt = dt
+        self.elevator = elevator
         self.l_switch = elevator.left_switch
         self.r_switch = elevator.right_switch
         self.aligning = False
@@ -70,9 +71,9 @@ class AlignMacro(GRTMacro):
         Have the robot align itself by ramming into a box
         when it is reasonably close to it
         '''
-        ramming_power = 0.2
-        turning_power = 0.2
-        weak_turning = 0.1
+        #ramming_power = 0.2
+        #turning_power = 0.2
+        #weak_turning = 0.1
         '''
         while(self.l_switch.get() and self.r_switch.get() and self.aligning ):
             #double check to make sure if this is the correct way to 
@@ -83,24 +84,28 @@ class AlignMacro(GRTMacro):
             ##### TESTING STUFF #####
             #print('Left limit switch state: %f, Right limit switch state: %f'%(self.l_switch.get(), self.r_switch.get())
        '''
+        print("Left switch: ", self.l_switch.get())
+        print("Right switch: ", self.r_switch.get())
         if self.enabled:
-            if not self.l_switch.get() and not self.r_switch.get():
-                self.dt.set_dt_output(ramming_power, ramming_power)
-            elif self.l_switch.get() and self.r_switch.get():
+            #if not self.l_switch.get() and not self.r_switch.get():
+            #    self.dt.set_lf_scale_factors(1, 1)
+            if self.l_switch.get() and self.r_switch.get():
                 #if both buttons are pressed (both are False)
+                self.dt.set_lf_scale_factors(1, 1)
+                self.elevator.set_state('level1')
                 self.dt.set_dt_output(0, 0)
                 print('ALIGNED')
                 #self.kill()
                 self.enabled = False
                 #stop the robot 
-            elif not self.l_switch.get():
+            elif self.r_switch.get():
                 #the right switch is pressed (because the left is not)
                 #shut off the right side to turn into position
-                self.dt.set_dt_output(turning_power, weak_turning)
-            else:
+                self.dt.set_lf_scale_factors(1, .05)
+            elif self.l_switch.get():
                 #the left switch is pressed (because the right is not)
                 #shut off the left side to turn into position
-                self.dt.set_dt_output(weak_turning, turning_power)
+                self.dt.set_lf_scale_factors(.05, 1)
                 #come to a stop
             #print('ALIGNED')
 
@@ -213,9 +218,9 @@ class ElevatorMacro(GRTMacro):
         if self.enabled:
             self.ERROR = self.setpoint - self.elevator_encoder.distance
             #If the setpoint is above the current distance.
-            print("Bottom switch: ", self.elevator.bottom_switch.get())
-            print("Bottom limit switch: ", self.elevator.bottom_limit_switch.get())
-            print("Encoder distance: ", self.elevator_encoder.distance)
+            #print("Bottom switch: ", self.elevator.bottom_switch.get())
+            #print("Bottom limit switch: ", self.elevator.bottom_limit_switch.get())
+            #print("Encoder distance: ", self.elevator_encoder.distance)
             #if not (self.elevator.top_switch.get() and self.elevator.bottom_switch.get()):
              #   self.macro_stop()
             if self.ERROR >= 0: # and self.elevator.top_switch.get():

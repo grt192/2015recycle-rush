@@ -22,18 +22,31 @@ class DriveTrain:
         self.right_shifter = right_shifter
         self.left_encoder = left_encoder
         self.right_encoder = right_encoder
+        self.left_output = 0
+        self.right_output = 0
+        self.left_scale = 1
+        self.right_scale = 1
 
     def set_dt_output(self, left_output, right_output):
         """
         Sets the DT output values; should be between -1 and 1.
         """
-        left_output *= self.power
-        right_output *= self.power
+        #self.left_output = left_output
+        #self.right_output = right_output
+        left_output *= self.left_scale
+        right_output *= self.right_scale
         self.left_motor.set(-left_output)
         self.right_motor.set(+right_output)
         #print("left output %f" % left_output)
         #print("right travel: %f" % self.right_encoder.distance)
         #print("left travel: %f" % self.left_encoder.distance)
+
+    #def scale_dt_output(self, left_scale, right_scale):
+    #    self.set_dt_output(self.left_output * left_scale, self.right_output * right_scale)
+
+    def set_lf_scale_factors(self, left_scale, right_scale):
+        self.left_scale = left_scale
+        self.right_scale = right_scale
 
     def set_right_motor(self, power):
         self.right_motor.set(power)
