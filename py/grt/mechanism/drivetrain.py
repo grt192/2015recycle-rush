@@ -35,6 +35,10 @@ class DriveTrain:
         #self.right_output = right_output
         left_output *= self.left_scale
         right_output *= self.right_scale
+        if not left_output == 0:
+            left_output = (left_output ** 3) / abs(left_output)
+        if not right_output == 0:
+            right_output = (right_output ** 3) / abs(right_output)
         self.left_motor.set(-left_output)
         self.right_motor.set(+right_output)
         #print("left output %f" % left_output)

@@ -11,6 +11,7 @@ class MechController:
         self.button9_count = 0
         self.last_height = 0
         self.manual_control = False
+        self.fourbar_automatic_control = False
         self.step_offset = False
 
     def _xbox_controller_listener(self, sensor, state_id, datum):
@@ -24,8 +25,12 @@ class MechController:
         if state_id == 'l_y_axis':
             if datum:
                 if abs(datum) > .1:
+                    self.fourbar.fourbar_macro.enabled = False
                     self.fourbar.elevate_speed(datum)
                 else:
+                    if self.fourbar_automatic_control:
+                        self.fourbar.fourbar_macro.setpoint = self.fourbar.fourbar_encoder.distance
+                        self.fourbar.fourbar_macro.enabled = True
                     self.fourbar.stop()
         if state_id == "back_button": #Makes it hard to accidentally press this.
             if datum:
@@ -152,12 +157,22 @@ class MechController:
 
         if state_id == "button3":
             if datum:
-                self.fourbar.elevate()
+                if self.fourbar_automatic_control:
+                    self.fourbar.fourbar_macro.enabled = True
+                    self.fourbar.set_state("up")
+                else:
+                    self.fourbar.fourbar_macro.enabled = False
+                    self.fourbar.elevate()
             else:
                 self.fourbar.stop()
         if state_id == "button2":
             if datum:
-                self.fourbar.lower()
+                if self.fourbar_automatic_control:
+                    self.fourbar.fourbar_macro.enabled = True
+                    self.fourbar.set_state("down")
+                else:
+                    self.fourbar.fourbar_macro.enabled = False
+                    self.fourbar.lower()
             else:
                 self.fourbar.stop()
 

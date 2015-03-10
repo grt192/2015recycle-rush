@@ -38,8 +38,8 @@ class ArcadeDriveController:
 
     def _joylistener(self, sensor, state_id, datum):
         if sensor in (self.l_joystick, self.r_joystick) and state_id in ('x_axis', 'y_axis'):
-            power = -self.l_joystick.y_axis * .8
-            turnval = (self.r_joystick.x_axis if self.r_joystick else self.l_joystick.x_axis) * .8
+            power = -self.l_joystick.y_axis
+            turnval = (self.r_joystick.x_axis if self.r_joystick else self.l_joystick.x_axis)
             # get turn value from r_joystick if it exists, else get it from l_joystick
             #print("Power: %f" % power)
 

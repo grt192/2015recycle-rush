@@ -109,7 +109,10 @@ right_switch = DigitalInput(6)
 elevator = Elevator(elevator_motor, elevator_encoder, left_switch=left_switch, right_switch=right_switch, dt=dt, top_switch=top_switch, bottom_switch=bottom_switch, bottom_limit_switch=bottom_limit_switch)
 
 fourbar_motor = CANTalon(5)
-fourbar = FourBar(fourbar_motor)
+fourbar_distance_per_rev = 1
+fourbar_cpr = 120
+fourbar_encoder = Encoder(10, 11, distance_per_rev=fourbar_distance_per_rev, cpr=fourbar_cpr, reverse=False)
+fourbar = FourBar(fourbar_motor, fourbar_encoder)
 
 talon_arr_basic = [dt_right, dt_left, elevator.lift_macro]
 talon_arr = [dt_right, dt_left, elevator.lift_macro, fourbar_motor]
