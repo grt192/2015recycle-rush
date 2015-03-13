@@ -39,7 +39,7 @@ class FourBarMacro(GRTMacro):
         self.ERROR = 0
         self.counter = 0 #counter of attempted pickups
         self.prev_pressed = False #for counter
-        self.run_threaded()
+        #self.run_threaded()
         
 
     def macro_initialize(self):

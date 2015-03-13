@@ -25,6 +25,7 @@ from grt.mechanism.mechcontroller import MechController
 #from grt.macro.align_macro import AlignMacro
 from grt.autonomous.basic_auto import BasicAuto
 from grt.autonomous.one_bin_stealer_auto import OneBinSteal
+from grt.autonomous.backup_bin_stealer import BackupBinSteal
 from teleop_controller import TeleopController
 from record_controller import RecordMacro, PlaybackMacro
 from collections import OrderedDict
@@ -121,6 +122,7 @@ record_macro = RecordMacro(talon_arr)
 
 basic_auto = BasicAuto(dt, elevator, talon_arr_basic)
 one_bin_steal = OneBinSteal(talon_arr)
+backup_bin_steal = BackupBinSteal(talon_arr)
 playback_macro = one_bin_steal.playback_macro
 
 

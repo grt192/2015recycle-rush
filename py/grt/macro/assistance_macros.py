@@ -16,28 +16,36 @@ class ReleaseMacro(GRTMacro):
         #ie. use the elevator's functions
         elevator.running_macros.append(self)
         self.enabled = False
-        self.run_threaded()
+        #self.run_threaded()
         self.dt = dt
     #while any switches are pressed, lower elevator
     def macro_periodic(self):
         if self.enabled:
-            if "release" not in self.elevator.lift_macro.current_state:
-                self.elevator.lift_macro.current_state += "_release"
-            else:
-                pass
-                #Possibly add in something to undo the release here.
-            self.elevator.lift_macro.setpoint = self.elevator.lift_macro.STATE_DICT[self.elevator.lift_macro.current_state]
-            self.enabled = False
-            #if not self.left_switch.get() and not self.right_switch.get():
-            #    self.elevator.set_state['level0']
-            #else:
-            #    self.elevator.lift_macro.setpoint = self.elevator.lift_macro.elevator_encoder.distance
-            #    self.elevator.stop()
-                #self.dt.set_dt_output(-.5, -.5)
-                #time.sleep(.5)
-                #self.dt.set_dt_output(0, 0)
-            #    self.enabled = False
+            #if not self.l_switch.get() and not self.r_switch.get():
+            #    self.dt.set_lf_scale_factors(1, 1)
+            if self.l_switch.get() and self.r_switch.get():
+                #if both buttons are pressed (both are False)
+                self.dt.set_lf_scale_factors(1, 1)
+                self.elevator.lower_half_step()
+                self.dt.set_dt_output(0, 0)
+                print('ALIGNED')
                 #self.kill()
+                self.enabled = False
+                #stop the robot 
+
+            """elif self.r_switch.get():
+                #the right switch is pressed (because the left is not)
+                #shut off the right side to turn into position
+                self.dt.set_lf_scale_factors(1, .05)
+            elif self.l_switch.get():
+                #the left switch is pressed (because the right is not)
+                #shut off the left side to turn into position
+                self.dt.set_lf_scale_factors(.05, 1)
+                #come to a stop
+            """
+            #else:
+            #    self.dt.set_lf_scale_factors(1, 1)
+            #print('ALIGNED')
     def macro_stop(self):
         self.elevator.stop()
         self.dt.set_dt_output(0)
@@ -64,6 +72,8 @@ class AlignMacro(GRTMacro):
         self.r_switch = elevator.right_switch
         self.aligning = False
         self.enabled = False
+        self.has_touched = False
+        self.backed_up = False
         self.run_threaded()
 
     def macro_periodic(self):
@@ -84,30 +94,60 @@ class AlignMacro(GRTMacro):
             ##### TESTING STUFF #####
             #print('Left limit switch state: %f, Right limit switch state: %f'%(self.l_switch.get(), self.r_switch.get())
        '''
-        print("Left switch: ", self.l_switch.get())
-        print("Right switch: ", self.r_switch.get())
+        #print("Left switch: ", self.l_switch.get())
+        #print("Right switch: ", self.r_switch.get())
+        self.better_align()
+                #stop the robot 
+            #elif self.r_switch.get():
+                #the right switch is pressed (because the left is not)
+                #shut off the right side to turn into position
+            #    self.dt.set_lf_scale_factors(.5, -.3)
+            #elif self.l_switch.get():
+                #the left switch is pressed (because the right is not)
+                #shut off the left side to turn into position
+            #    self.dt.set_lf_scale_factors(-.3, .5)
+                #come to a stop
+            #else:
+            #    self.dt.set_lf_scale_factors(1, 1)
+            #print('ALIGNED')
+    def old_align(self):
         if self.enabled:
             #if not self.l_switch.get() and not self.r_switch.get():
             #    self.dt.set_lf_scale_factors(1, 1)
             if self.l_switch.get() and self.r_switch.get():
                 #if both buttons are pressed (both are False)
-                self.dt.set_lf_scale_factors(1, 1)
+                #self.dt.set_lf_scale_factors(1, 1)
                 self.elevator.set_state('level1')
                 self.dt.set_dt_output(0, 0)
                 print('ALIGNED')
                 #self.kill()
                 self.enabled = False
-                #stop the robot 
-            elif self.r_switch.get():
-                #the right switch is pressed (because the left is not)
-                #shut off the right side to turn into position
-                self.dt.set_lf_scale_factors(1, .05)
-            elif self.l_switch.get():
-                #the left switch is pressed (because the right is not)
-                #shut off the left side to turn into position
-                self.dt.set_lf_scale_factors(.05, 1)
-                #come to a stop
-            #print('ALIGNED')
+
+    def better_align(self):
+        
+        if self.enabled:
+            if not self.has_touched:
+                if self.l_switch.get() and self.r_switch.get():
+                    self.dt.set_dt_output(-.2, -.2)
+                    self.has_touched = True
+
+            elif self.has_touched:
+                if self.l_switch.get() or self.r_switch.get():
+                    self.dt.set_dt_output(-.2, -.2)
+                else:
+                    self.dt.set_dt_output(.2, .2)
+                    self.has_touched = False
+                    self.backed_up = True
+            if self.backed_up:
+                if self.l_switch.get() and self.r_switch.get():
+                    self.elevator.set_state('level1')
+                    self.dt.set_dt_output(0, 0)
+                    self.backed_up = False
+                    self.has_touched = False
+                    self.enabled = False
+
+        #self.dt.set_dt_output(-.2, -.2)
+        #time.sleep(.25)
 
     def align(self):
         #self.run_threaded()
@@ -218,9 +258,9 @@ class ElevatorMacro(GRTMacro):
         if self.enabled:
             self.ERROR = self.setpoint - self.elevator_encoder.distance
             #If the setpoint is above the current distance.
-            #print("Bottom switch: ", self.elevator.bottom_switch.get())
-            #print("Bottom limit switch: ", self.elevator.bottom_limit_switch.get())
-            #print("Encoder distance: ", self.elevator_encoder.distance)
+            print("Bottom switch: ", self.elevator.bottom_switch.get())
+            print("Bottom limit switch: ", self.elevator.bottom_limit_switch.get())
+            print("Encoder distance: ", self.elevator_encoder.distance)
             #if not (self.elevator.top_switch.get() and self.elevator.bottom_switch.get()):
              #   self.macro_stop()
             if self.ERROR >= 0: # and self.elevator.top_switch.get():

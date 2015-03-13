@@ -13,6 +13,7 @@ class MechController:
         self.manual_control = False
         self.fourbar_automatic_control = False
         self.step_offset = False
+        self.no_limit_switches = False
 
     def _xbox_controller_listener(self, sensor, state_id, datum):
         if self.manual_control:
@@ -26,7 +27,7 @@ class MechController:
             if datum:
                 if abs(datum) > .1:
                     self.fourbar.fourbar_macro.enabled = False
-                    self.fourbar.elevate_speed(datum)
+                    self.fourbar.elevate_speed(-datum)
                 else:
                     if self.fourbar_automatic_control:
                         self.fourbar.fourbar_macro.setpoint = self.fourbar.fourbar_encoder.distance
@@ -40,6 +41,17 @@ class MechController:
             if datum:
                 self.elevator.lift_macro.enabled = True
                 self.manual_control = False
+
+        if state_id == "x_button":
+            if datum:
+                self.no_limit_switches = False
+        if state_id == "y_button":
+            if datum:
+                self.no_limit_switches = True
+        if state_id == "r_shoulder":
+            self.elevator.raise_full_step()
+        if state_id == "l_shoulder":
+            self.elevator.lower_full_step()
 
         if state_id == "a_button_2":
             if datum:
@@ -120,7 +132,10 @@ class MechController:
                 #    self.trigger_count += 1
                 if self.elevator.lift_macro.current_state == "level0" or self.elevator.lift_macro.current_state == "level0_release" or self.elevator.lift_macro.current_state == "level0.5_release":
                     #self.elevator.set_state('level1')
-                    self.elevator.align_macro.enabled = True
+                    if self.no_limit_switches:
+                        self.elevator.set_state('level1')
+                    else:
+                        self.elevator.align_macro.enabled = True
                     print("Springing")
                 else:
                     self.elevator.align_macro.enabled = False
@@ -128,8 +143,11 @@ class MechController:
                     self.elevator.lower_half_step()
                 print(self.elevator.lift_macro.current_state)
             else:
-                self.elevator.align_macro.dt.set_lf_scale_factors(1, 1)
                 self.elevator.align_macro.enabled = False
+                self.elevator.release_macro.enabled = False
+                self.elevator.align_macro.has_touched = False
+                self.elevator.align_macro.backed_up = False
+                self.elevator.align_macro.dt.set_lf_scale_factors(1, 1)
             
             #if datum:
             #    self.elevator.set_state('level3')
