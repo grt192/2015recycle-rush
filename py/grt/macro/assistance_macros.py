@@ -96,7 +96,7 @@ class AlignMacro(GRTMacro):
        '''
         #print("Left switch: ", self.l_switch.get())
         #print("Right switch: ", self.r_switch.get())
-        self.better_align()
+        self.old_align()
                 #stop the robot 
             #elif self.r_switch.get():
                 #the right switch is pressed (because the left is not)
@@ -128,14 +128,14 @@ class AlignMacro(GRTMacro):
         if self.enabled:
             if not self.has_touched:
                 if self.l_switch.get() and self.r_switch.get():
-                    self.dt.set_dt_output(-.2, -.2)
+                    self.dt.set_dt_output(-.15, -.15)
                     self.has_touched = True
 
             elif self.has_touched:
                 if self.l_switch.get() or self.r_switch.get():
-                    self.dt.set_dt_output(-.2, -.2)
+                    self.dt.set_dt_output(-.15, -.15)
                 else:
-                    self.dt.set_dt_output(.2, .2)
+                    self.dt.set_dt_output(.25, .25)
                     self.has_touched = False
                     self.backed_up = True
             if self.backed_up:
@@ -145,6 +145,8 @@ class AlignMacro(GRTMacro):
                     self.backed_up = False
                     self.has_touched = False
                     self.enabled = False
+                else:
+                    self.dt.set_dt_output(.25, .25)
 
         #self.dt.set_dt_output(-.2, -.2)
         #time.sleep(.25)

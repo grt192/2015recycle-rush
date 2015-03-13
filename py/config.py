@@ -123,7 +123,7 @@ record_macro = RecordMacro(talon_arr)
 basic_auto = BasicAuto(dt, elevator, talon_arr_basic)
 one_bin_steal = OneBinSteal(talon_arr)
 backup_bin_steal = BackupBinSteal(talon_arr)
-playback_macro = one_bin_steal.playback_macro
+playback_macro = backup_bin_steal.playback_macro
 
 
 

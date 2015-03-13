@@ -45,11 +45,9 @@ class MyRobot(wpilib.SampleRobot):
             global auto
             print("Autonomous started")
             if self.driver_stick.j.getZ() > .5:
-                pass
-                #self.basic_auto.run_autonomous()
+                self.basic_auto.run_autonomous()
             else:
-                pass
-                #self.one_bin_steal.run_autonomous()
+                self.one_bin_steal.run_autonomous()
             while self.isAutonomous() and self.isEnabled():
                 tinit = time.time()
                 self.sp.poll()

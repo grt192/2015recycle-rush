@@ -13,7 +13,7 @@ class MechController:
         self.manual_control = False
         self.fourbar_automatic_control = False
         self.step_offset = False
-        self.no_limit_switches = False
+        self.no_limit_switches = True
 
     def _xbox_controller_listener(self, sensor, state_id, datum):
         if self.manual_control:
