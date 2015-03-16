@@ -96,7 +96,7 @@ class AlignMacro(GRTMacro):
        '''
         #print("Left switch: ", self.l_switch.get())
         #print("Right switch: ", self.r_switch.get())
-        self.old_align()
+        self.better_align()
                 #stop the robot 
             #elif self.r_switch.get():
                 #the right switch is pressed (because the left is not)
@@ -127,7 +127,8 @@ class AlignMacro(GRTMacro):
         
         if self.enabled:
             if not self.has_touched:
-                if self.l_switch.get() and self.r_switch.get():
+                if self.l_switch.get() or self.r_switch.get():
+                    self.dt.disable()
                     self.dt.set_dt_output(-.15, -.15)
                     self.has_touched = True
 
@@ -135,18 +136,26 @@ class AlignMacro(GRTMacro):
                 if self.l_switch.get() or self.r_switch.get():
                     self.dt.set_dt_output(-.15, -.15)
                 else:
-                    self.dt.set_dt_output(.25, .25)
+                    self.dt.set_dt_output(.15, .15)
                     self.has_touched = False
                     self.backed_up = True
             if self.backed_up:
                 if self.l_switch.get() and self.r_switch.get():
                     self.elevator.set_state('level1')
+                    time.sleep(1)
                     self.dt.set_dt_output(0, 0)
                     self.backed_up = False
                     self.has_touched = False
+                    self.dt.enable()
                     self.enabled = False
+                elif self.l_switch.get():
+                    self.dt.set_dt_output(-.1, .2)
+                elif self.r_switch.get():
+                    self.dt.set_dt_output(.2, -.1)
                 else:
-                    self.dt.set_dt_output(.25, .25)
+                    self.dt.set_dt_output(.15, .15)
+        else:
+            self.dt.enable()
 
         #self.dt.set_dt_output(-.2, -.2)
         #time.sleep(.25)

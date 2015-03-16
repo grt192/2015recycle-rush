@@ -35,6 +35,7 @@ class ArcadeDriveController:
         #self.instructions = OrderedDict([("1, <class 'wpilib.cantalon.CANTalon'>", [-0.04398826979472141, -0.04398826979472141, -0.011730205278592375, -0.10654936461388075, -0.11925708699902249, 0.04985337243401759, 0.09970674486803519, 0.0, -0.05571847507331378, -0.05571847507331378, 0.005865102639296188, -0.005865102639296188, -0.005865102639296188]), ("7, <class 'wpilib.cantalon.CANTalon'>", [-0.04398826979472141, -0.04398826979472141, -0.011730205278592375, 0.10654936461388075, 0.13196480938416422, -0.04985337243401759, -0.09970674486803519, 0.0, -0.05571847507331378, -0.05571847507331378, 0.005865102639296188, 0.01857282502443793, 0.01857282502443793]), ("100, <class 'grt.macro.assistance_macros.ElevatorMacro'>", [0, 0, 0, 0, 0, 0, 22, 22, 22, 22, 22, 22, 22]), ("5, <class 'wpilib.cantalon.CANTalon'>", [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])])
 
         #Teleop can placement instructions
+        self.disabled = False
         self.instructions = OrderedDict([("1, <class 'wpilib.cantalon.CANTalon'>", [-0.01857282502443793, -0.01857282502443793, -0.01857282502443793, 0.01857282502443793, 0.05571847507331378, 0.01857282502443793, -0.04398826979472141, -0.011730205278592375, 0.06842619745845552, 0.11241446725317693, 0.1935483870967742, 0.1935483870967742, 0.21212121212121213, 0.22482893450635386, 0.22482893450635386, 0.22482893450635386, 0.22482893450635386, 0.1436950146627566, -0.03714565004887586, 0.011730205278592375]), ("7, <class 'wpilib.cantalon.CANTalon'>", [-0.03128054740957967, -0.03128054740957967, -0.03128054740957967, 0.01857282502443793, -0.030303030303030304, 0.01857282502443793, -0.04398826979472141, 0.011730205278592375, -0.06842619745845552, -0.15640273704789834, -0.1935483870967742, -0.1935483870967742, -0.22482893450635386, -0.22482893450635386, -0.22482893450635386, -0.22482893450635386, -0.22482893450635386, -0.18084066471163246, -0.04985337243401759, 0.0]), ("100, <class 'grt.macro.assistance_macros.ElevatorMacro'>", [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]), ("5, <class 'wpilib.cantalon.CANTalon'>", [0.0, 0.0, 0.0, -0.4995112414467253, -0.4995112414467253, -0.4995112414467253, -0.4995112414467253, -0.4995112414467253, -0.4995112414467253, -0.4995112414467253, -0.4995112414467253, -0.4995112414467253, -0.4995112414467253, -0.4995112414467253, -0.4995112414467253, -0.4995112414467253, -0.4995112414467253, 0.0, 0.0, 0.0])])
 
         self.engage()
@@ -45,9 +46,7 @@ class ArcadeDriveController:
             turnval = (self.r_joystick.x_axis if self.r_joystick else self.l_joystick.x_axis) * .8
             # get turn value from r_joystick if it exists, else get it from l_joystick
             #print("Power: %f" % power)
-
-            self.dt.set_dt_output(power + turnval,
-                                  power - turnval)
+            self.dt.drive_controller_set_dt_output(power + turnval, power - turnval)
         elif sensor == self.l_joystick and state_id == 'trigger':
             if datum:
                 self.dt.upshift()
@@ -73,6 +72,10 @@ class ArcadeDriveController:
                 self.playback_macro.load("/home/lvuser/py/instructions.py")
                 self.playback_macro.start_playback()
 
+    def disable(self):
+        self.disabled = True
+    def enable(self):
+        self.disabled = False
 
     def engage(self):
             self.l_joystick.add_listener(self._joylistener)

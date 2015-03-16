@@ -22,6 +22,7 @@ class DriveTrain:
         self.right_shifter = right_shifter
         self.left_encoder = left_encoder
         self.right_encoder = right_encoder
+        self.disabled = False
         self.left_output = 0
         self.right_output = 0
         self.left_scale = 1
@@ -44,6 +45,13 @@ class DriveTrain:
         #print("left output %f" % left_output)
         #print("right travel: %f" % self.right_encoder.distance)
         #print("left travel: %f" % self.left_encoder.distance)
+    def drive_controller_set_dt_output(self, left_output, right_output):
+        if not self.disabled:
+            self.set_dt_output(left_output, right_output)
+    def enable(self):
+        self.disabled = False
+    def disable(self):
+        self.disabled = True
 
     #def scale_dt_output(self, left_scale, right_scale):
     #    self.set_dt_output(self.left_output * left_scale, self.right_output * right_scale)

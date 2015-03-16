@@ -14,6 +14,7 @@ class MechController:
         self.fourbar_automatic_control = False
         self.step_offset = False
         self.no_limit_switches = True
+        self.num_trigger_presses = 0
 
     def _xbox_controller_listener(self, sensor, state_id, datum):
         if self.manual_control:
@@ -137,10 +138,16 @@ class MechController:
                     else:
                         self.elevator.align_macro.enabled = True
                     print("Springing")
+                    self.num_trigger_presses = 0
                 else:
-                    self.elevator.align_macro.enabled = False
-                    self.elevator.align_macro.dt.set_lf_scale_factors(1, 1)
-                    self.elevator.lower_half_step()
+                    if not self.num_trigger_presses == 1:
+                        self.elevator.align_macro.enabled = False
+                        self.elevator.align_macro.dt.set_lf_scale_factors(1, 1)
+                        self.elevator.lower_half_step()
+                        self.num_trigger_presses += 1
+                    else:
+                        self.elevator.set_state('level0')
+                        self.num_trigger_presses = 0
                 print(self.elevator.lift_macro.current_state)
             else:
                 self.elevator.align_macro.enabled = False
@@ -164,6 +171,8 @@ class MechController:
 
         if state_id == "button6":
             if datum:
+                if self.elevator.lift_macro.current_state == "level0" or self.elevator.lift_macro.current_state == "level0_release" or self.elevator.lift_macro.current_state == "level0.5_release":
+                    self.num_trigger_presses = 0
                 self.elevator.raise_full_step()
                 print(self.elevator.lift_macro.current_state)
 
