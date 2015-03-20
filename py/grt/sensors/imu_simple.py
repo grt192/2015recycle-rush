@@ -28,7 +28,7 @@ class IMUSimple(threading.Thread):
             return yaw, pitch, roll, compass
 
     def __init__(self):
-        self.serial = serial.Serial(1, 57500)
+        self.serial = serial.Serial("/dev/ptyp7")
         super().__init__(name="IMU Listener", daemon=True)
         self.start()
         self.mutex = threading.RLock()

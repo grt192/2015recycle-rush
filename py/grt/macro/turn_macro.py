@@ -3,80 +3,71 @@ __author__ = "dhruv, Sidd Karamcheti"
 from grt.core import GRTMacro
 import wpilib
 
-#constants = Constants()
 
 class TurnMacro(GRTMacro):
-    """
-    Macro that turns a set distance.
-    """
-   # TP = constants['TP']
-    #TI = constants['TI']
-    #TD = constants['TD']
-    #TOLERANCE = constants['TMtol']
-
-    class PIDTurnSource(wpilib.PIDSource):
-        """
-        PIDSource for turning; uses gyro angle as feedback.
-        """
-        def __init__(self, turn_macro):
-            super().__init__()
-            self.turn_macro = turn_macro
-        def PIDGet(self):
-            return self.turn_macro.gyro.g.GetAngle()
-
-    class PIDTurnOutput(wpilib.PIDOutput):
-        def __init__(self, turn_macro):
-            super().__init__()
-            self.turn_macro = turn_macro
-        def PIDWrite(self, output):
-            self.turn_macro.dt.set_dt_output(output, -output)
-
-    def __init__(self, dt, gyro, turn_angle, timeout=None):
+    def __init__(self, dt, gyro, setpoint=0, timeout=None):
         """
         Initialize with drivetrain, gyroscope, desired turn angle and timeout.
         """
         super().__init__(timeout)
         self.dt = dt
         self.gyro = gyro
-        self.turn_angle = turn_angle
+        self.setpoint = setpoint
         self.timeout = timeout
-        self.pid_source = self.PIDTurnSource(self)
-        self.pid_output = self.PIDTurnOutput(self)
-        self.previously_on_target = False
 
-        self.controller = wpilib.PIDController(self.TP, self.TI, self.TD,
-                                               self.pid_source, self.pid_output)
-        self.controller.SetOutputRange(-1, 1)
-        self.controller.SetAbsoluteTolerance(self.TOLERANCE)
-        constants.add_listener(self._constant_listener)
+    def macro_periodic(self):
+        print("Turning!")
+        self.ERROR = self.setpoint - self.gyro.getYaw()
+        if self.ERROR >= 0:
+            if self.ERROR > 10:
+                self.dt.set_dt_output(.8, -.8)
+            elif self.ERROR <= 10 and self.ERROR > 5:
+                self.dt.set_dt_output(.2, -.2)
+            if self.ERROR <= 5:
+                self.macro_stop()
+                self.terminate()
+        elif self.ERROR < 0:
+            if abs(self.ERROR) > 10:
+                self.dt.set_dt_output(-.8, .8)
+            elif abs(self.ERROR) <= 10 and abs(self.ERROR) > 5:
+                self.dt.set_dt_output(-.2, .2)
+            if abs(self.ERROR) <= 5:
+                self.macro_stop()
+                self.terminate()
 
-    def _constant_listener(self, sensor, state_id, datum):
-        if state_id in ('TP', 'TI', 'TD'):
-            self.__dict__[state_id] = datum
-            self.controller.setPID(self.TP, self.TI, self.TD)
-        elif state_id == 'TMtol':
-            self.TOLERANCE = datum
-            self.controller.SetAbsoluteTolerance(datum)
 
-    def perform(self):
-        if self.controller.OnTarget():
-            if self.previously_on_target:
-                self.kill()
-            else:
-                self.previously_on_target = True
-        else:
-            self.previously_on_target = False
-
-    def die(self):
-        self.dt.set_dt_output(0, 0)
-        self.controller.Disable()
-
-    def stop(self):
+    def macro_stop(self):
         self.dt.set_dt_output(0, 0)
 
-    def initialize(self):
+    """def macro_initialize(self):
         start_angle = self.gyro.angle
         target_angle = start_angle + self.turn_angle
         self.controller.SetSetpoint(target_angle)
         self.controller.Enable()
         print('MacroTurn is initialized')
+    """
+
+    def turn_to(self, turn_angle):
+        self.setpoint = turn_angle
+        self.run_threaded()
+    def turn(self, turn_angle):
+        start_angle = self.gyro.getYaw()
+        target_angle = start_angle + turn_angle
+        self.setpoint = target_angle
+        self.run_threaded()
+
+class TurnRawMacro(TurnMacro):
+    def __init__(self, dt, gyro, setpoint=0, timeout=None):
+        """
+        Initialize with drivetrain, gyroscope, desired turn angle and timeout.
+        """
+        super().__init__(dt, gyro, setpoint, timeout)
+        self.dt = dt
+        self.gyro = gyro
+        self.setpoint = setpoint
+        self.timeout = timeout
+    def macro_initialize(self):
+        start_angle = self.gyro.getYaw()
+        target_angle = start_angle + turn_angle
+        self.setpoint = target_angle
+

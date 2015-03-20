@@ -31,6 +31,11 @@ from teleop_controller import TeleopController
 from record_controller import RecordMacro, PlaybackMacro
 from collections import OrderedDict
 
+from grt.sensors.imu_simple import IMUSimple
+from grt.autonomous.crazy_auto import CrazyAuto
+
+imu = IMUSimple()
+
 #from grt.sensors.switch import Switch
 
 #import grt.networktables as networktables
@@ -127,6 +132,7 @@ one_bin_steal = OneBinSteal(talon_arr)
 backup_bin_steal = BackupBinSteal(talon_arr)
 playback_macro = backup_bin_steal.playback_macro
 
+crazy_auto = CrazyAuto(talon_arr, dt, imu, ultrasonic)
 
 
 sp = SensorPoller((gyro, left_encoder, right_encoder, elevator_encoder, ultrasonic))
