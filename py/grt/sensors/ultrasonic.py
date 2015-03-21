@@ -12,4 +12,4 @@ class Ultrasonic(Sensor):
 
     def poll(self):
         self.distance = self.u.getVoltage() * 1000 / self.mv_per_in
-        print(self.distance)
+        #print(self.distance)

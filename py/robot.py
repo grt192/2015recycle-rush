@@ -26,6 +26,7 @@ class MyRobot(wpilib.SampleRobot):
         self.basic_auto = config.basic_auto
         self.one_bin_steal = config.one_bin_steal
         self.crazy_auto = config.crazy_auto
+        self.imu = config.imu
         try:
             auto = config.basic_auto
         except AttributeError:
@@ -41,6 +42,7 @@ class MyRobot(wpilib.SampleRobot):
         while self.isDisabled():
             tinit = time.time()
             self.sp.poll()
+            print("imu: ", self.imu.getYaw())
             self.safeSleep(tinit, .04)
     if auto_exists:
         def autonomous(self):

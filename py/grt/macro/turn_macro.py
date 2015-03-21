@@ -17,23 +17,30 @@ class TurnMacro(GRTMacro):
 
     def macro_periodic(self):
         print("Turning!")
-        self.ERROR = self.setpoint - self.gyro.getYaw()
+        self.ERROR = self.gyro.getYaw() - self.setpoint 
+        print(self.ERROR)
         if self.ERROR >= 0:
-            if self.ERROR > 10:
-                self.dt.set_dt_output(.8, -.8)
-            elif self.ERROR <= 10 and self.ERROR > 5:
-                self.dt.set_dt_output(.2, -.2)
-            if self.ERROR <= 5:
+            if self.ERROR > 30:
+                self.dt.set_dt_output(-.5, .5)
+            elif self.ERROR <= 30 and self.ERROR > 25:
+                self.dt.set_dt_output(-.1, .1)
+            if self.ERROR <= 25:
+                print("Terminated 2")
                 self.macro_stop()
+                print("Terminated 1")
                 self.terminate()
+                print("Terminated")
         elif self.ERROR < 0:
-            if abs(self.ERROR) > 10:
-                self.dt.set_dt_output(-.8, .8)
-            elif abs(self.ERROR) <= 10 and abs(self.ERROR) > 5:
-                self.dt.set_dt_output(-.2, .2)
-            if abs(self.ERROR) <= 5:
+            if abs(self.ERROR) > 30:
+                self.dt.set_dt_output(.5, -.5)
+            elif abs(self.ERROR) <= 30 and abs(self.ERROR) > 25:
+                self.dt.set_dt_output(.1, -.1)
+            if abs(self.ERROR) <= 25:
+                print("Terminated 2")
                 self.macro_stop()
+                print("Terminated 1")
                 self.terminate()
+                print("Terminated")
 
 
     def macro_stop(self):
