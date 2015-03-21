@@ -4,27 +4,73 @@ from grt.core import GRTMacro
 import wpilib
 #import threading
 
-#constants = Constants()
-
 
 class DriveMacro(GRTMacro):
-    """
-    Drive Macro; drives forwards a certain distance while
-    maintaining orientation
-    """
-    leftSF = 1
-    rightSF = -1
- #   DTP = constants['DTP']
-  #  DTI = constants['DTI']
-   # DTD = constants['DTD']
-    #CP = constants['CP']
-    #CI = constants['CI']
-    #CD = constants['CD']
-    #TOLERANCE = constants['DMtol']
-    #MAX_MOTOR_OUTPUT = constants['DMMAX']
+    def __init__(self, dt, distance_to_travel=0, timeout=None):
+        """
+        Initialize with drivetrain, gyroscope, desired turn angle and timeout.
+        """
+        super().__init__(timeout)
+        self.dt = dt
+        self.right_encoder = dt.right_encoder
+        self.left_encoder = dt.left_encoder
+        self.distance_to_travel = distance_to_travel
+        self.timeout = timeout
 
-    distance = None
-    previously_on_target = False
+    def macro_periodic(self):
+        print("Driving!")
+        self.left_error = self.left_setpoint - self.left_encoder.distance
+        self.right_error = self.right_setpoint - self.right_encoder.distance
+        self.ERROR = (self.left_error + self.right_error) / 2
+        if self.ERROR >= 0:
+            if self.ERROR > 3:
+                self.dt.set_dt_output(.8, .8)
+            elif self.ERROR <= 3 and self.ERROR > 1:
+                self.dt.set_dt_output(.2, .2)
+            if self.ERROR <= 1:
+                self.macro_stop()
+                self.terminate()
+
+        elif self.ERROR < 0:
+            if abs(self.ERROR) > 3:
+                self.dt.set_dt_output(-.8, -.8)
+            elif abs(self.ERROR) <= 3 and abs(self.ERROR) > 1:
+                self.dt.set_dt_output(-.2, -.2)
+            if abs(self.ERROR) <= 1:
+                self.macro_stop()
+                self.terminate()
+
+
+
+    def macro_stop(self):
+        self.dt.set_dt_output(0, 0)
+
+    def macro_initialize(self):
+        start_left_distance = self.left_encoder.distance
+        start_right_distance = self.right_encoder.distance
+        self.left_setpoint = start_left_distance + self.distance_to_travel
+        self.right_setpoint = start_right_distance + self.distance_to_travel
+
+    """def macro_initialize(self):
+        start_angle = self.gyro.angle
+        target_angle = start_angle + self.turn_angle
+        self.controller.SetSetpoint(target_angle)
+        self.controller.Enable()
+        print('MacroTurn is initialized')
+    """
+
+    
+    def drive(self, distance_to_travel):
+        start_left_distance = self.left_encoder.distance
+        start_right_distance = self.right_encoder.distance
+        self.left_setpoint = start_left_distance + distance_to_travel
+        self.right_setpoint = start_right_distance + distance_to_travel
+        self.run_threaded()
+
+
+
+
+class DriveMacroOld(GRTMacro):
 
     def __init__(self, dt, distance, timeout):
         """

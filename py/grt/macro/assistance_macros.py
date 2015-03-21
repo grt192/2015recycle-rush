@@ -63,7 +63,7 @@ class AlignMacro(GRTMacro):
     align the pickup with a tote.  
     '''
 
-    def __init__(self, elevator, dt, timeout=None):
+    def __init__(self, elevator, dt, ultrasonic=None, timeout=None):
         super().__init__(timeout)
 
         self.dt = dt
@@ -74,6 +74,11 @@ class AlignMacro(GRTMacro):
         self.enabled = False
         self.has_touched = False
         self.backed_up = False
+        self.timed_out = False
+        self.first_pass = True
+        self.timer = threading.Timer(3, self.time_out) #After 3 seconds, call self.time_out()
+        self.tinit = 100000
+        self.ultrasonic = ultrasonic
         self.run_threaded()
 
     def macro_periodic(self):
@@ -96,7 +101,7 @@ class AlignMacro(GRTMacro):
        '''
         #print("Left switch: ", self.l_switch.get())
         #print("Right switch: ", self.r_switch.get())
-        self.better_align()
+        self.pid_ultrasonic_align()
                 #stop the robot 
             #elif self.r_switch.get():
                 #the right switch is pressed (because the left is not)
@@ -159,6 +164,46 @@ class AlignMacro(GRTMacro):
 
         #self.dt.set_dt_output(-.2, -.2)
         #time.sleep(.25)
+    def ultrasonic_align(self):
+        if self.enabled:
+            if self.ultrasonic.distance < 6 and self.first_pass:
+                self.dt.disable()
+                self.dt.set_dt_output(.2, .2)
+                self.first_pass = False
+                self.tinit = time.time()
+                
+            if (self.l_switch.get() or self.r_switch.get() or ((time.time() - self.tinit) > 3)) and not self.first_pass:
+                self.elevator.set_state('level1')
+                self.dt.set_dt_output(0, 0)
+                self.dt.enable()
+                print('ALIGNED')
+                #self.kill()
+                self.first_pass = True
+                self.enabled = False
+        else:
+            self.dt.enable()
+
+    def pid_ultrasonic_align(self):
+        if self.enabled:
+            self.ERROR = self.ultrasonic.distance
+            if self.ERROR >= 0:
+                if self.ERROR > 40:
+                    self.dt.enable()
+                if self.ERROR <= 40 and self.ERROR > 20:
+                    self.dt.disable()
+                    self.dt.set_dt_output(.3, .3)
+                if self.ERROR > 7 and abs(self.ERROR) <= 20:
+                    self.dt.disable()
+                    self.dt.set_dt_output(.2, .2)
+                elif self.l_switch.get() or self.r_switch.get():
+                    self.macro_stop()
+            elif self.ERROR < 0:
+                print("Negative distance!")
+        else:
+            self.dt.enable()
+
+    def time_out(self):
+        self.timed_out = True
 
     def align(self):
         #self.run_threaded()
@@ -171,7 +216,12 @@ class AlignMacro(GRTMacro):
     
     def macro_stop(self):
         #self.aligning = False
+        self.elevator.set_state('level1')
         self.dt.set_dt_output(0, 0)
+        time.sleep(.5)
+        self.dt.enable()
+        print('ALIGNED')
+        self.enabled = False
 
     #def wait_for_align(self):
         #Do the same thing here. NOT threaded.
@@ -269,9 +319,9 @@ class ElevatorMacro(GRTMacro):
         if self.enabled:
             self.ERROR = self.setpoint - self.elevator_encoder.distance
             #If the setpoint is above the current distance.
-            print("Bottom switch: ", self.elevator.bottom_switch.get())
-            print("Bottom limit switch: ", self.elevator.bottom_limit_switch.get())
-            print("Encoder distance: ", self.elevator_encoder.distance)
+            #print("Bottom switch: ", self.elevator.bottom_switch.get())
+            #print("Bottom limit switch: ", self.elevator.bottom_limit_switch.get())
+            #print("Encoder distance: ", self.elevator_encoder.distance)
             #if not (self.elevator.top_switch.get() and self.elevator.bottom_switch.get()):
              #   self.macro_stop()
             if self.ERROR >= 0: # and self.elevator.top_switch.get():

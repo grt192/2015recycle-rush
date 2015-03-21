@@ -24,6 +24,7 @@ class MyRobot(wpilib.SampleRobot):
         global auto_exists
         self.basic_auto = config.basic_auto
         self.one_bin_steal = config.one_bin_steal
+        self.crazy_auto = config.crazy_auto
         try:
             auto = config.basic_auto
         except AttributeError:
@@ -35,6 +36,7 @@ class MyRobot(wpilib.SampleRobot):
         if auto_exists:
             self.basic_auto.stop_autonomous()
             self.one_bin_steal.stop_autonomous()
+            self.crazy_auto.stop_autonomous()
         while self.isDisabled():
             tinit = time.time()
             self.sp.poll()
@@ -46,13 +48,15 @@ class MyRobot(wpilib.SampleRobot):
             if self.driver_stick.j.getZ() > .5:
                 self.basic_auto.run_autonomous()
             else:
-                self.one_bin_steal.run_autonomous()
+                #self.one_bin_steal.run_autonomous()
+                self.crazy_auto.run_autonomous()
             while self.isAutonomous() and self.isEnabled():
                 tinit = time.time()
                 self.sp.poll()
                 self.safeSleep(tinit, .04)
             self.basic_auto.stop_autonomous()
             self.one_bin_steal.stop_autonomous()
+            self.crazy_auto.stop_autonomous()
     else:
         def autonomous(self):
             pass
@@ -61,6 +65,7 @@ class MyRobot(wpilib.SampleRobot):
         if auto_exists:
             self.basic_auto.stop_autonomous()
             self.one_bin_steal.stop_autonomous()
+            self.crazy_auto.stop_autonomous()
         while self.isOperatorControl() and self.isEnabled():
             tinit = time.time()
             #self.teleop_controller.poll()

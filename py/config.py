@@ -19,6 +19,7 @@ from grt.mechanism.motorset import Motorset
 from grt.sensors.ticker import Ticker
 from grt.sensors.encoder import Encoder
 from grt.sensors.talon import Talon
+from grt.sensors.ultrasonic import Ultrasonic
 from grt.mechanism.betamechs import FourBar, TwoMotorPickup
 from grt.mechanism.elevator import Elevator
 from grt.mechanism.mechcontroller import MechController
@@ -29,6 +30,11 @@ from grt.autonomous.backup_bin_stealer import BackupBinSteal
 from teleop_controller import TeleopController
 from record_controller import RecordMacro, PlaybackMacro
 from collections import OrderedDict
+
+from grt.sensors.imu_simple import IMUSimple
+from grt.autonomous.crazy_auto import CrazyAuto
+
+imu = IMUSimple()
 
 #from grt.sensors.switch import Switch
 
@@ -72,7 +78,8 @@ bottom_limit_switch = DigitalInput(9)
 bottom_switch = DigitalInput(8)
 left_switch = DigitalInput(7)
 right_switch = DigitalInput(6)
-elevator = Elevator(elevator_motor, elevator_encoder, left_switch=left_switch, right_switch=right_switch, dt=dt, top_switch=top_switch, bottom_switch=bottom_switch, bottom_limit_switch=bottom_limit_switch)
+ultrasonic = Ultrasonic(0)
+elevator = Elevator(elevator_motor, elevator_encoder, left_switch=left_switch, right_switch=right_switch, dt=dt, top_switch=top_switch, bottom_switch=bottom_switch, bottom_limit_switch=bottom_limit_switch, ultrasonic=ultrasonic)
 
 fourbar_motor = CANTalon(5)
 fourbar_distance_per_rev = 1
@@ -90,9 +97,10 @@ one_bin_steal = OneBinSteal(talon_arr)
 backup_bin_steal = BackupBinSteal(talon_arr)
 playback_macro = backup_bin_steal.playback_macro
 
+crazy_auto = CrazyAuto(talon_arr, dt, imu, ultrasonic)
 
 
-sp = SensorPoller((gyro, left_encoder, right_encoder, elevator_encoder))
+sp = SensorPoller((gyro, left_encoder, right_encoder, elevator_encoder, ultrasonic))
 
 #Analog Sensors
 
