@@ -10,6 +10,9 @@ class Ultrasonic(Sensor):
         self.mv_per_in = mv_per_in #millivolts per inch
         self.u = AnalogInput(channel)
 
+    def getDistance(self):
+        return self.distance
+
     def poll(self):
         self.distance = self.u.getVoltage() * 1000 / self.mv_per_in
         print(self.distance)

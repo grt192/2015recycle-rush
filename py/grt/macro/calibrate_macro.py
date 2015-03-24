@@ -4,10 +4,10 @@ import wpilib
 
 
 class CalibrateMacro(GRTMacro):
+    """
+    Drives to a set distance from an object using an ultrasonic sensor.
+    """
     def __init__(self, dt, ultrasonic, setpoint=0, timeout=None):
-        """
-        Drives to a set distance from an object using an ultrasonic sensor.
-        """
         super().__init__(timeout)
         self.dt = dt
         self.ultrasonic = ultrasonic

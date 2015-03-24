@@ -1,5 +1,4 @@
 __author__ = "Calvin Huang, Sidd Karamcheti"
-from wpilib import Talon
 
 class DriveTrain:
     """
@@ -32,19 +31,11 @@ class DriveTrain:
         """
         Sets the DT output values; should be between -1 and 1.
         """
-        #self.left_output = left_output
-        #self.right_output = right_output
         left_output *= self.left_scale
         right_output *= self.right_scale
-        #if not left_output == 0:
-        #    left_output = (left_output ** 3) / abs(left_output)
-        #if not right_output == 0:
-        #    right_output = (right_output ** 3) / abs(right_output)
         self.left_motor.set(-left_output)
         self.right_motor.set(+right_output)
-        #print("left output %f" % left_output)
-        #print("right travel: %f" % self.right_encoder.distance)
-        #print("left travel: %f" % self.left_encoder.distance)
+
     def drive_controller_set_dt_output(self, left_output, right_output):
         if not self.disabled:
             self.set_dt_output(left_output, right_output)
@@ -90,3 +81,7 @@ class DriveTrain:
             self.left_shifter.set(True)
         if self.right_shifter:
             self.right_shifter.set(True)
+
+    def set_scales(self, left_scale, right_scale):
+        self.left_scale = left_scale
+        self.right_scale = right_scale
