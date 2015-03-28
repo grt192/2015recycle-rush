@@ -63,6 +63,29 @@ class Sensor(object):
         """
         pass
 
+class CompoundSensor(Sensor):
+    """
+    Amalgam of sensors; acts like a sensor
+    """
+
+    def __init__(self, *args):
+        """
+        Sets the polltime (in seconds) and the initial set of sensors.
+        """
+        super().__init__()
+        self.sensors = list(args)
+
+    def add_sensor(self, sensor):
+        """
+        Adds a sensor to poll.
+        """
+        self.sensors.append(sensor)
+
+    def remove_sensor(self, sensor):
+        """
+        Removes a sensor.
+        """
+        self.sensors.remove(sensor)
 
 class SensorPoller(object):
     """
