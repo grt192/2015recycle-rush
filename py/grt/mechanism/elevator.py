@@ -2,7 +2,7 @@ from grt.macro.assistance_macros import *
 import wpilib
 
 class Elevator:
-    def __init__(self, elevator_motor, elevator_encoder, left_switch=None, right_switch=None, dt=None, winch_servo=None, top_switch=None, bottom_switch=None, bottom_limit_switch=None, ultrasonic=None):
+    def __init__(self, elevator_motor, elevator_encoder, left_switch=None, right_switch=None, dt=None, winch_servo=None, top_switch=None, bottom_switch=None, bottom_limit_switch=None, left_ultrasonic=None, right_ultrasonic=None):
         self.elevator_motor = elevator_motor
         self.elevator_encoder = elevator_encoder
         self.winch_servo = winch_servo
@@ -12,10 +12,11 @@ class Elevator:
         self.bottom_switch = bottom_switch
         self.running_macros = []
         self.bottom_limit_switch = bottom_limit_switch
-        self.ultrasonic = ultrasonic
+        self.left_ultrasonic = left_ultrasonic
+        self.right_ultrasonic = right_ultrasonic
         #The elevator passes itself to the macros so that they can take over its functions.
         self.release_macro = ReleaseMacro(self, dt)
-        self.align_macro = AlignMacro(self, dt, ultrasonic)
+        self.align_macro = AlignMacro(self, dt, left_ultrasonic, right_ultrasonic)
         self.lift_macro = ElevatorMacro(self)
 
         #self.temp_talon = wpilib.Talon(9)

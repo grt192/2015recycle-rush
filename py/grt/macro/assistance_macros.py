@@ -63,7 +63,7 @@ class AlignMacro(GRTMacro):
     align the pickup with a tote.  
     '''
 
-    def __init__(self, elevator, dt, ultrasonic=None, timeout=None):
+    def __init__(self, elevator, dt, left_ultrasonic=None, right_ultrasonic=None, timeout=None):
         super().__init__(timeout)
 
         self.dt = dt
@@ -78,7 +78,8 @@ class AlignMacro(GRTMacro):
         self.first_pass = True
         self.timer = threading.Timer(3, self.time_out) #After 3 seconds, call self.time_out()
         self.tinit = 100000
-        self.ultrasonic = ultrasonic
+        self.left_ultrasonic = left_ultrasonic
+        self.right_ultrasonic = right_ultrasonic
         self.run_threaded()
 
     def macro_periodic(self):
@@ -101,7 +102,7 @@ class AlignMacro(GRTMacro):
        '''
         #print("Left switch: ", self.l_switch.get())
         #print("Right switch: ", self.r_switch.get())
-        self.pid_ultrasonic_align()
+        self.double_ultrasonic_align()
                 #stop the robot 
             #elif self.r_switch.get():
                 #the right switch is pressed (because the left is not)
@@ -201,6 +202,49 @@ class AlignMacro(GRTMacro):
                 print("Negative distance!")
         else:
             self.dt.enable()
+
+    def double_ultrasonic_align(self):
+        print("Left: ", self.left_ultrasonic.distance)
+        print("Right: ", self.right_ultrasonic.distance)
+        if self.enabled:
+            self.left_error = self.left_ultrasonic.distance
+            self.right_error = self.right_ultrasonic.distance
+            self.avg_error = (self.left_error + self.right_error) / 2
+            if self.avg_error > 40:
+                self.dt.enable()
+            if self.avg_error <= 40 and self.avg_error > 16:
+                self.dt.disable()
+                #self.pivot_into_position()
+                self.dt.set_dt_output(.4, .4)
+            if self.avg_error > 7 and self.avg_error <= 16:
+                self.dt.disable()
+                self.dt.set_dt_output(.2, .2)
+            if self.left_error < 6.5 or self.right_error < 6.5:
+                self.macro_stop()
+        else:
+            self.dt.enable()
+
+    def pivot_into_position(self):
+        error_dif = abs(self.left_error - self.right_error)
+        if self.left_error > 40: #The left side is missing the tote
+            self.dt.set_dt_output(.2, 0)
+        elif self.right_error > 40:
+            self.dt.set_dt_output(0, .2)
+        elif self.left_error < self.right_error:
+            if error_dif > 5:
+                self.dt.set_dt_output(.3, 0)
+            if error_dif <= 5 and error_dif > .5:
+                self.dt.set_dt_output(.3, .1)
+            if error_dif <= .5:
+                self.dt.set_dt_output(.2, .2)
+        elif self.left_error >= self.right_error:
+            if error_dif > 5:
+                self.dt.set_dt_output(0, .3)
+            if error_dif <= 5 and error_dif > .5:
+                self.dt.set_dt_output(.1, .3)
+            if error_dif <= .5:
+                self.dt.set_dt_output(.2, .2)
+
 
     def time_out(self):
         self.timed_out = True

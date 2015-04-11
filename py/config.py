@@ -77,7 +77,7 @@ dt_l4.set(7)
 
 
 
-gyro = Gyro(1)
+#gyro = Gyro(1)
 
 
 
@@ -113,8 +113,9 @@ bottom_limit_switch = DigitalInput(9)
 bottom_switch = DigitalInput(8)
 left_switch = DigitalInput(7)
 right_switch = DigitalInput(6)
-ultrasonic = Ultrasonic(0)
-elevator = Elevator(elevator_motor, elevator_encoder, left_switch=left_switch, right_switch=right_switch, dt=dt, top_switch=top_switch, bottom_switch=bottom_switch, bottom_limit_switch=bottom_limit_switch, ultrasonic=ultrasonic)
+left_ultrasonic = Ultrasonic(0)
+right_ultrasonic = Ultrasonic(1)
+elevator = Elevator(elevator_motor, elevator_encoder, left_switch=left_switch, right_switch=right_switch, dt=dt, top_switch=top_switch, bottom_switch=bottom_switch, bottom_limit_switch=bottom_limit_switch, left_ultrasonic=left_ultrasonic, right_ultrasonic=right_ultrasonic)
 
 fourbar_motor = CANTalon(5)
 fourbar_distance_per_rev = 1
@@ -132,10 +133,10 @@ one_bin_steal = OneBinSteal(talon_arr)
 backup_bin_steal = BackupBinSteal(talon_arr)
 playback_macro = backup_bin_steal.playback_macro
 
-crazy_auto = CrazyAuto(talon_arr, dt, imu, ultrasonic)
+crazy_auto = CrazyAuto(talon_arr, dt, imu, left_ultrasonic)
 
 
-sp = SensorPoller((gyro, left_encoder, right_encoder, elevator_encoder, ultrasonic))
+sp = SensorPoller((left_encoder, right_encoder, elevator_encoder, left_ultrasonic, right_ultrasonic))
 
 #else:
 	#dt = DriveTrain(dt_left, dt_right, left_encoder=None, right_encoder=None)

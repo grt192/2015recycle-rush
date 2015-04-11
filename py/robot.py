@@ -42,7 +42,7 @@ class MyRobot(wpilib.SampleRobot):
         while self.isDisabled():
             tinit = time.time()
             self.sp.poll()
-            print("imu: ", self.imu.getYaw())
+            #print("imu: ", self.imu.getYaw())
             self.safeSleep(tinit, .04)
     if auto_exists:
         def autonomous(self):

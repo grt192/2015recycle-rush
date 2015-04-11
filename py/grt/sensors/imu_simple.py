@@ -28,7 +28,8 @@ class IMUSimple(threading.Thread):
             return yaw, pitch, roll, compass
 
     def __init__(self):
-        self.serial = serial.Serial("/dev/ttyACM0", 57600) #Check this!
+        #self.serial = serial.Serial("/dev/ttyACM0", 57600) #Check this!
+        self.serial = serial.Serial("/dev/ptyp7")
         super().__init__(name="IMU Listener", daemon=True)
         self.yaw = 0.0
         self.pitch = 0.0

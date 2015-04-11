@@ -27,6 +27,8 @@ class DriveTrain:
         self.right_output = 0
         self.left_scale = 1
         self.right_scale = 1
+        self.left_add = 0
+        self.right_add = 0
 
     def set_dt_output(self, left_output, right_output):
         """
@@ -36,6 +38,8 @@ class DriveTrain:
         #self.right_output = right_output
         left_output *= self.left_scale
         right_output *= self.right_scale
+        left_output += self.left_add
+        right_output += self.right_add
         #if not left_output == 0:
         #    left_output = (left_output ** 3) / abs(left_output)
         #if not right_output == 0:
@@ -52,6 +56,10 @@ class DriveTrain:
         self.disabled = False
     def disable(self):
         self.disabled = True
+
+    def add_to_dt_output(self, left_output, right_output):
+        self.left_add = left_output
+        self.right_add = right_output
 
     #def scale_dt_output(self, left_scale, right_scale):
     #    self.set_dt_output(self.left_output * left_scale, self.right_output * right_scale)
