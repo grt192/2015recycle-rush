@@ -2,7 +2,6 @@ __author__ = "Sidd Karamcheti, Calvin Huang, Alex Mallery"
 
 
 import wpilib
-import inspect
 
 import time
 

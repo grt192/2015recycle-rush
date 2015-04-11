@@ -7,7 +7,7 @@ from wpilib import Solenoid, Compressor, DriverStation, DigitalInput
 import wpilib
 import math
 
-from wpilib import Solenoid, Compressor, DriverStation, CANTalon, DigitalInput
+from wpilib import DriverStation, CANTalon, DigitalInput
 
 from grt.sensors.attack_joystick import Attack3Joystick
 from grt.sensors.xbox_joystick import XboxJoystick
@@ -52,50 +52,15 @@ recording_enabled = False
 #dt_right_alt = Talon(1)
 #dt_left_alt = Talon(2)
 
-dt_right = CANTalon(1)
-dt_r2 = CANTalon(2)
-dt_r3 = CANTalon(3)
-dt_r4 = CANTalon(4)
-
-dt_left = CANTalon(7)
-dt_l2 = CANTalon(8)
-dt_l3 = CANTalon(9)
-dt_l4 = CANTalon(10)
-
-dt_r2.changeControlMode(CANTalon.ControlMode.Follower)
-dt_r3.changeControlMode(CANTalon.ControlMode.Follower)
-dt_r4.changeControlMode(CANTalon.ControlMode.Follower)
-dt_l2.changeControlMode(CANTalon.ControlMode.Follower)
-dt_l3.changeControlMode(CANTalon.ControlMode.Follower)
-dt_l4.changeControlMode(CANTalon.ControlMode.Follower)
-dt_r2.set(1)
-dt_r3.set(1)
-dt_r4.set(1)
-dt_l2.set(7)
-dt_l3.set(7)
-dt_l4.set(7)
-
-
+dt_right = Motorset((CANTalon(id) for id in range(1, 5)))
+dt_left = Motorset((CANTalon(id) for id in range(7, 11)))
 
 #gyro = Gyro(1)
 
-
-
-
-
-
-
-#if auto_enabled:
 left_encoder = Encoder(0, 1, distance_per_rev=(4 * math.pi), reverse=True)
 right_encoder = Encoder(2, 3, distance_per_rev=(4*math.pi))
 
 dt = DriveTrain(dt_left, dt_right, left_encoder=left_encoder, right_encoder=right_encoder)
-	#self.drive_macro = DriveMacro(dt, 10, 2)
-
-#Digital inputs
-#l_switch = DigitalInput(8)
-#r_switch = DigitalInput(9)
-
 
 elevator_motor = CANTalon(11)
 elevator_motor_2 = CANTalon(12)
@@ -138,15 +103,6 @@ crazy_auto = CrazyAuto(talon_arr, dt, imu, left_ultrasonic)
 
 sp = SensorPoller((left_encoder, right_encoder, elevator_encoder, left_ultrasonic, right_ultrasonic))
 
-#else:
-	#dt = DriveTrain(dt_left, dt_right, left_encoder=None, right_encoder=None)
-	#sp = SensorPoller((gyro,))
-
-
-
-
-
-
 #Analog Sensors
 
 # Controllers
@@ -166,14 +122,6 @@ if recording_enabled:
 else:
 	teleop_controller = TeleopController(sp, hid_sp)
 
-
-
-#Mechs
-
-
-
-
-
 motor1 = CANTalon(14)
 motor2 = CANTalon(15)
 two_motor_pickup = TwoMotorPickup(motor1, motor2)
@@ -181,8 +129,3 @@ two_motor_pickup = TwoMotorPickup(motor1, motor2)
 mc = MechController(elevator, fourbar, two_motor_pickup, driver_stick, xbox_controller)
 
 ds = DriverStation.getInstance()
-
-
-
-
-

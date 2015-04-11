@@ -1,3 +1,5 @@
+from wpilib import CanTalon
+
 class Motorset:
     """
     Drop-in replacement for wpilib.SpeedController. Useful for grouping
@@ -9,10 +11,11 @@ class Motorset:
         """
         Takes a tuple of motors and possibly a tuple of
         scalefactors, with which the motor outputs are multiplied.
+        Uses  CANTalon Control mode following.
         """
         self.motors = motors
-        self.num_motors = len(motors)
-        self.setscalefactors(scalefactors)
+        self.num_motors = len(self.motors)
+        self.set_scalefactors(scalefactors)
         self.Set = self.set
         self.Get = self.get
 
@@ -31,7 +34,7 @@ class Motorset:
         """
         return self.val
 
-    def setscalefactors(self, scalefactors):
+    def set_scalefactors(self, scalefactors):
         """
         Depending on robot orientation, drivetrain configuration, controller
         configuration, motors in the same gearbox may need to be
