@@ -1,7 +1,8 @@
-GRTPyFramework
+2015recycle-rush
 ==============
+Code for GRT 192's robot for the 2015 FRC season.
 
-GRTFramework for Python, for event-based robotics programming.
+Written using GRTPyFramework, a library for event-based robotics programming in python.
 
 Introduction:
 =============
