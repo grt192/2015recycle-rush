@@ -1,3 +1,5 @@
+from grt.macro.fourbar_macro import FourBarMacro
+
 class Pickup:
     def __init__(self, clamp_pn):
         self.clamp_pn = clamp_pn
@@ -9,11 +11,13 @@ class Pickup:
         self.clamp_pn.set(0)
 
 class FourBar:
-    def __init__(self, fourbar_motor):
+    def __init__(self, fourbar_motor, fourbar_encoder=None):
         self.fourbar_motor = fourbar_motor
+        self.fourbar_encoder = fourbar_encoder
+        self.fourbar_macro = FourBarMacro(self)
 
     def elevate(self):
-        self.fourbar_motor.set(1)
+        self.fourbar_motor.set(.7)
 
     def lower(self):
         self.fourbar_motor.set(-.5)
@@ -23,6 +27,25 @@ class FourBar:
 
     def elevate_speed(self, power):
         self.fourbar_motor.set(power)
+
+    def set_state(self, state):
+        self.fourbar_macro.lift_to(state)
+
+    def lower_step(self):
+        self.step_logic(-1)
+    def raise_step(self):
+        self.step_logic(1)
+
+    def step_logic(self, steps):
+        current_index = list(self.lift_macro.STATE_DICT.keys()).index(self.lift_macro.current_state)
+        adjusted_index = current_index + steps
+        print(current_index)
+        if adjusted_index >= 0: #Prevents wrap-around
+            try:
+                self.lift_macro.current_state = list(self.lift_macro.STATE_DICT.keys())[adjusted_index]
+                self.lift_macro.setpoint = list(self.lift_macro.STATE_DICT.values())[adjusted_index]
+            except IndexError:
+                pass
 
 class TwoMotorPickup:
     def __init__(self, motor1, motor2):
